@@ -1,5 +1,5 @@
 from typing import Optional
-from virtuals_acp import VirtualsACP, ACPJob, ACPJobPhase, ACPMemo
+from virtuals_acp import VirtualsACP, ACPJob, ACPJobPhase, ACPMemo  # type: ignore
 from .type import (
     AnalysisRequest,
     AnalysisResponse,
@@ -43,6 +43,9 @@ def extract_analysis_response(memos: list[ACPMemo]) -> Optional[AnalysisResponse
 
     Args:
         memos: List of ACP memos to process
+
+    Returns:
+        AnalysisResponse if a valid one is found, otherwise None
     """
     if not memos:
         return None
@@ -71,6 +74,9 @@ def extract_vault_registration_request(
 
     Args:
         memos: List of ACP memos to process
+
+    Returns:
+        VaultRegistrationRequest if a valid one is found, otherwise None
     """
     if not memos:
         return None

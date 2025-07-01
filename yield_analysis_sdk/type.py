@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Any
 
 from pydantic import BaseModel, Field
 
@@ -26,7 +26,7 @@ class Chain(Enum):
     OTHER = "other"
 
     @classmethod
-    def _missing_(cls, value):
+    def _missing_(cls, value: Any) -> "Chain":
         """Handle unknown chain values by returning OTHER."""
         return cls.OTHER
 

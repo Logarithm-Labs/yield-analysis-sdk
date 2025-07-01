@@ -5,8 +5,8 @@ A Python SDK for analyzing DeFi vault performance and yield metrics.
 """
 
 __version__ = "0.1.0"
-__author__ = "Your Name"
-__email__ = "your.email@example.com"
+__author__ = "Logarithm Labs"
+__email__ = "dev@logarithm.fi"
 
 from .acp import (
     extract_analysis_request,
@@ -16,6 +16,7 @@ from .acp import (
 )
 from .analysis import analyze_yield_with_daily_share_price
 from .subgraph import get_daily_share_price_history_from_subgraph
+from .validators import normalize_address
 
 # Import main classes and functions for public API
 from .type import (
@@ -52,4 +53,5 @@ __all__ = [
     "extract_analysis_response",
     "extract_vault_registration_request",
     "extract_vault_registration_response",
+    "normalize_address",
 ]

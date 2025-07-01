@@ -3,7 +3,7 @@ Common validators and mixins for the yield analysis SDK.
 """
 
 import re
-from typing import Any, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING, Union
 from pydantic import field_validator
 
 if TYPE_CHECKING:
@@ -24,7 +24,10 @@ class ChainValidatorMixin:
                 return Chain(v)
             except ValueError:
                 return Chain.OTHER
-        return v
+        elif isinstance(v, Chain):
+            return v
+        else:
+            return Chain.OTHER
 
 
 class VaultAddressValidatorMixin:
@@ -36,7 +39,10 @@ class VaultAddressValidatorMixin:
         """Validate vault address format and normalize it."""
         if isinstance(v, str):
             return normalize_address(v)
-        return v
+        elif v is None:
+            raise ValueError("Vault address cannot be None")
+        else:
+            return str(v)
 
 
 class UnderlyingTokenValidatorMixin:
@@ -48,7 +54,10 @@ class UnderlyingTokenValidatorMixin:
         """Validate underlying token address format and normalize it."""
         if isinstance(v, str):
             return normalize_address(v)
-        return v
+        elif v is None:
+            raise ValueError("Underlying token cannot be None")
+        else:
+            return str(v)
 
 
 def validate_chain_value(value: Any) -> "Chain":
@@ -68,7 +77,10 @@ def validate_chain_value(value: Any) -> "Chain":
             return Chain(value)
         except ValueError:
             return Chain.OTHER
-    return value
+    elif isinstance(value, Chain):
+        return value
+    else:
+        return Chain.OTHER
 
 
 def normalize_address(address: str) -> str:
