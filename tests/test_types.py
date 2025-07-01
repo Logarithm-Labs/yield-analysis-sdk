@@ -25,6 +25,18 @@ class TestTypes:
         assert Chain.BASE.value == "base"
         assert Chain.ETHEREUM.value == "ethereum"
         assert Chain.ARBITRUM.value == "arbitrum"
+        assert Chain.OTHER.value == "other"
+
+    def test_chain_enum_unknown_values(self) -> None:
+        """Test Chain enum handling of unknown values."""
+        # Test with unknown string values
+        assert Chain("unknown_chain") == Chain.OTHER
+        assert Chain("invalid_chain") == Chain.OTHER
+        assert Chain("") == Chain.OTHER
+        
+        # Test with known values
+        assert Chain("base") == Chain.BASE
+        assert Chain("ethereum") == Chain.ETHEREUM
 
     def test_strategy_type_enum(self) -> None:
         """Test StrategyType enum values."""
@@ -45,6 +57,20 @@ class TestTypes:
 
         assert request.chain == Chain.BASE
         assert request.underlying_token == "0x1234567890abcdef"
+
+    def test_analysis_request_with_unknown_chain(self) -> None:
+        """Test AnalysisRequest with unknown chain value."""
+        # Test with unknown chain string
+        request = AnalysisRequest(
+            chain="unknown_chain", underlying_token="0x1234567890abcdef"
+        )
+        assert request.chain == Chain.OTHER
+        
+        # Test with invalid chain string
+        request2 = AnalysisRequest(
+            chain="invalid_chain_name", underlying_token="0x1234567890abcdef"
+        )
+        assert request2.chain == Chain.OTHER
 
     def test_vault_info_creation(self) -> None:
         """Test VaultInfo model creation."""
