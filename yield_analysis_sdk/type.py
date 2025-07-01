@@ -73,6 +73,7 @@ class VaultRegistrationRequest(
 class VaultRegistrationResponse(BaseModel):
     is_registered: bool
     message: str
+    contract_tx_hash: str
 
 
 class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
