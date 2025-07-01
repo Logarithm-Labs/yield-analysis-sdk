@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import List, Tuple
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
+
+from .validators import ChainValidatorMixin, VaultAddressValidatorMixin
 
 
 class Chain(Enum):
@@ -18,7 +20,7 @@ class Chain(Enum):
     MOONBEAM = "moonbeam"
     MOONRIVER = "moonriver"
     OTHER = "other"
-    
+
     @classmethod
     def _missing_(cls, value):
         """Handle unknown values by returning OTHER."""
@@ -57,31 +59,21 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 
-class SharePriceHistory(BaseModel):
-    vault_name: str
+class VaultRegistrationRequest(
+    VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel
+):
+    chain: Chain
     vault_address: str
-    price_history: List[Tuple[int, float]]
 
 
-class AnalysisRequest(BaseModel):
+class AnalysisRequest(ChainValidatorMixin, BaseModel):
     chain: Chain = Field(..., description="The chain of vaults to analyze")
     underlying_token: str = Field(
         ..., description="The underlying token of vaults to analyze"
     )
-    
-    @field_validator('chain', mode='before')
-    @classmethod
-    def validate_chain(cls, v):
-        """Validate chain and return OTHER if not found."""
-        if isinstance(v, str):
-            try:
-                return Chain(v)
-            except ValueError:
-                return Chain.OTHER
-        return v
 
 
-class VaultInfo(BaseModel):
+class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
     # Basic Vault Information
     chain: Chain
     vault_address: str
@@ -140,3 +132,9 @@ class AnalysisResponse(BaseModel):
     analyses: list[VaultPerformanceAnalysis] = Field(
         ..., description="List of vault analyses"
     )
+
+
+class SharePriceHistory(VaultAddressValidatorMixin, BaseModel):
+    vault_name: str
+    vault_address: str
+    price_history: List[Tuple[int, float]]

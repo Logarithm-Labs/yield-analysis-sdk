@@ -33,7 +33,7 @@ class TestTypes:
         assert Chain("unknown_chain") == Chain.OTHER
         assert Chain("invalid_chain") == Chain.OTHER
         assert Chain("") == Chain.OTHER
-        
+
         # Test with known values
         assert Chain("base") == Chain.BASE
         assert Chain("ethereum") == Chain.ETHEREUM
@@ -65,7 +65,7 @@ class TestTypes:
             chain="unknown_chain", underlying_token="0x1234567890abcdef"
         )
         assert request.chain == Chain.OTHER
-        
+
         # Test with invalid chain string
         request2 = AnalysisRequest(
             chain="invalid_chain_name", underlying_token="0x1234567890abcdef"
@@ -76,7 +76,7 @@ class TestTypes:
         """Test VaultInfo model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -86,7 +86,7 @@ class TestTypes:
         )
 
         assert vault_info.chain == Chain.BASE
-        assert vault_info.vault_address == "0x1234567890abcdef"
+        assert vault_info.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
         assert vault_info.vault_name == "Test Vault"
         assert vault_info.max_deposit_amount == 1000000.0
         assert vault_info.entry_fee_bps == 0.0  # Default value
@@ -119,7 +119,7 @@ class TestTypes:
         """Test VaultPerformanceAnalysis model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -150,7 +150,7 @@ class TestTypes:
         """Test AnalysisResponse model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -183,11 +183,13 @@ class TestTypes:
         """Test SharePriceHistory model creation."""
         price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=[(1640995200, 1.05), (1640908800, 1.04)],
         )
 
         assert price_history.vault_name == "Test Vault"
-        assert price_history.vault_address == "0x1234567890abcdef"
+        assert (
+            price_history.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        )
         assert len(price_history.price_history) == 2
         assert price_history.price_history[0] == (1640995200, 1.05)
