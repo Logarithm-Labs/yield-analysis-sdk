@@ -1,5 +1,5 @@
 import math
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from .type import PerformanceAnalysis, SharePriceHistory
 
@@ -44,17 +44,11 @@ def analyze_yield_with_daily_share_price(
     apy_90d = _calculate_apy(prices, 90) if len(prices) >= 90 else 0.0
 
     # Calculate essential risk metrics
-    volatility_30d = (
-        _calculate_volatility(daily_returns, 30) if len(daily_returns) >= 30 else 0.0
-    )
+    volatility_30d = _calculate_volatility(daily_returns, 30)
     max_drawdown = _calculate_max_drawdown(prices)
 
     # Calculate Sharpe ratio (mandatory for allocation decisions)
-    sharpe_ratio = (
-        _calculate_sharpe_ratio(daily_returns, risk_free_rate) if daily_returns else 0.0
-    )
-    if sharpe_ratio is None:
-        sharpe_ratio = 0.0
+    sharpe_ratio = _calculate_sharpe_ratio(daily_returns, risk_free_rate)
 
     # Create PerformanceAnalysis object
     performance_analysis = PerformanceAnalysis(
@@ -71,30 +65,30 @@ def analyze_yield_with_daily_share_price(
     return performance_analysis
 
 
-def _calculate_apy(prices: List[float], days: int) -> Optional[float]:
+def _calculate_apy(prices: List[float], days: int) -> float:
     """Calculate APY for a given period."""
     if len(prices) < days:
-        return None
+        return 0.0
 
     start_price = prices[-days]
     end_price = prices[-1]
 
     if start_price <= 0:
-        return None
+        return 0.0
 
     # Calculate total return
     total_return = (end_price - start_price) / start_price
 
     # Convert to APY (annualized)
-    apy = (1 + total_return) ** (365 / days) - 1
+    apy: float = (1 + total_return) ** (365 / days) - 1
 
     return apy * 100  # Convert to percentage
 
 
-def _calculate_volatility(returns: List[float], days: int) -> Optional[float]:
+def _calculate_volatility(returns: List[float], days: int) -> float:
     """Calculate volatility (standard deviation of returns) for a given period."""
     if len(returns) < days:
-        return None
+        return 0.0
 
     period_returns = returns[-days:]
     mean_return = sum(period_returns) / len(period_returns)
@@ -131,12 +125,10 @@ def _calculate_max_drawdown(prices: List[float]) -> float:
     return max_drawdown * 100  # Convert to percentage
 
 
-def _calculate_sharpe_ratio(
-    returns: List[float], risk_free_rate: float
-) -> Optional[float]:
+def _calculate_sharpe_ratio(returns: List[float], risk_free_rate: float) -> float:
     """Calculate Sharpe ratio using proper annualization."""
     if not returns:
-        return None
+        return 0.0
 
     mean_return = sum(returns) / len(returns)
 
@@ -145,7 +137,7 @@ def _calculate_sharpe_ratio(
     std_dev = math.sqrt(variance)
 
     if std_dev == 0:
-        return None
+        return 0.0
 
     # Annualize returns and volatility (assuming daily data)
     # Daily return to annual: daily_return * 365
@@ -158,10 +150,10 @@ def _calculate_sharpe_ratio(
     return sharpe_ratio
 
 
-def _calculate_var(returns: List[float], confidence_level: float) -> Optional[float]:
+def _calculate_var(returns: List[float], confidence_level: float) -> float:
     """Calculate Value at Risk at given confidence level."""
     if not returns:
-        return None
+        return 0.0
 
     # Sort returns in ascending order
     sorted_returns = sorted(returns)
@@ -173,10 +165,10 @@ def _calculate_var(returns: List[float], confidence_level: float) -> Optional[fl
     return var * 100  # Convert to percentage
 
 
-def _calculate_apy_trend(prices: List[float], days: int) -> Optional[float]:
+def _calculate_apy_trend(prices: List[float], days: int) -> float:
     """Calculate APY trend over a period."""
     if len(prices) < days * 2:
-        return None
+        return 0.0
 
     # Calculate APY for the most recent period
     recent_apy = _calculate_apy(prices, days)
@@ -184,9 +176,6 @@ def _calculate_apy_trend(prices: List[float], days: int) -> Optional[float]:
     # Calculate APY for the previous period
     previous_prices = prices[:-days]
     previous_apy = _calculate_apy(previous_prices, days)
-
-    if recent_apy is None or previous_apy is None:
-        return None
 
     # Calculate trend (positive means increasing APY)
     trend = recent_apy - previous_apy

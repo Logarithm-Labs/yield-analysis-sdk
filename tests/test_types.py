@@ -20,24 +20,24 @@ from yield_analysis_sdk.type import (
 class TestTypes:
     """Test cases for type definitions."""
 
-    def test_chain_enum(self):
+    def test_chain_enum(self) -> None:
         """Test Chain enum values."""
         assert Chain.BASE.value == "base"
         assert Chain.ETHEREUM.value == "ethereum"
         assert Chain.ARBITRUM.value == "arbitrum"
 
-    def test_strategy_type_enum(self):
+    def test_strategy_type_enum(self) -> None:
         """Test StrategyType enum values."""
         assert StrategyType.LIQUID_STAKING.value == "liquid_staking"
         assert StrategyType.LENDING.value == "lending"
         assert StrategyType.YIELD_AGGREGATOR.value == "yield_aggregator"
 
-    def test_audit_status_enum(self):
+    def test_audit_status_enum(self) -> None:
         """Test AuditStatus enum values."""
         assert AuditStatus.AUDITED.value == "audited"
         assert AuditStatus.NOT_AUDITED.value == "not_audited"
 
-    def test_analysis_request_creation(self):
+    def test_analysis_request_creation(self) -> None:
         """Test AnalysisRequest model creation."""
         request = AnalysisRequest(
             chain=Chain.BASE, underlying_token="0x1234567890abcdef"
@@ -46,7 +46,7 @@ class TestTypes:
         assert request.chain == Chain.BASE
         assert request.underlying_token == "0x1234567890abcdef"
 
-    def test_vault_info_creation(self):
+    def test_vault_info_creation(self) -> None:
         """Test VaultInfo model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
@@ -54,6 +54,9 @@ class TestTypes:
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
+            entry_fee_bps=0.0,
+            exit_fee_bps=0.0,
+            risk_free_rate=0.05,
         )
 
         assert vault_info.chain == Chain.BASE
@@ -64,7 +67,7 @@ class TestTypes:
         assert vault_info.exit_fee_bps == 0.0  # Default value
         assert vault_info.risk_free_rate == 0.05  # Default value
 
-    def test_performance_analysis_creation(self):
+    def test_performance_analysis_creation(self) -> None:
         """Test PerformanceAnalysis model creation."""
         performance = PerformanceAnalysis(
             apy_7d=5.2,
@@ -86,7 +89,7 @@ class TestTypes:
         assert performance.current_price == 1.05
         assert performance.analysis_period_days == 90
 
-    def test_vault_performance_analysis_creation(self):
+    def test_vault_performance_analysis_creation(self) -> None:
         """Test VaultPerformanceAnalysis model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
@@ -94,6 +97,9 @@ class TestTypes:
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
+            entry_fee_bps=0.0,
+            exit_fee_bps=0.0,
+            risk_free_rate=0.05,
         )
 
         performance = PerformanceAnalysis(
@@ -114,7 +120,7 @@ class TestTypes:
         assert vault_analysis.vault_info == vault_info
         assert vault_analysis.performance == performance
 
-    def test_analysis_response_creation(self):
+    def test_analysis_response_creation(self) -> None:
         """Test AnalysisResponse model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
@@ -122,6 +128,9 @@ class TestTypes:
             vault_name="Test Vault",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
+            entry_fee_bps=0.0,
+            exit_fee_bps=0.0,
+            risk_free_rate=0.05,
         )
 
         performance = PerformanceAnalysis(
@@ -144,7 +153,7 @@ class TestTypes:
         assert len(response.analyses) == 1
         assert response.analyses[0] == vault_analysis
 
-    def test_share_price_history_creation(self):
+    def test_share_price_history_creation(self) -> None:
         """Test SharePriceHistory model creation."""
         price_history = SharePriceHistory(
             vault_name="Test Vault",

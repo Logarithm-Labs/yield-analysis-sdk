@@ -42,7 +42,7 @@ def _send_graphql_query_to_subgraph(
     query: str,
     variables: Dict[str, Any],
     api_key: str,
-):
+) -> Any:
     headers = {"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"}
 
     # Prepare the request payload
@@ -64,7 +64,7 @@ def _send_graphql_query_to_subgraph(
 
 def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
     if not res or "data" not in res or not res["data"]["vaultStats_collection"]:
-        return "No data found for the specified vaults"
+        return []
 
     history_by_vault = {}
 
@@ -91,7 +91,17 @@ def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
     for vault_address in history_by_vault:
         history_by_vault[vault_address]["price_history"].sort(key=lambda x: x[0])
 
-    return list(history_by_vault.values())
+    # Convert to SharePriceHistory objects
+    result = []
+    for vault_data in history_by_vault.values():
+        share_price_history = SharePriceHistory(
+            vault_name=vault_data["vault_name"],
+            vault_address=vault_data["vault_address"],
+            price_history=vault_data["price_history"],
+        )
+        result.append(share_price_history)
+
+    return result
 
 
 def get_daily_share_price_history_from_subgraph(
@@ -113,7 +123,7 @@ def get_daily_share_price_history_from_subgraph(
         "length": length * len(formatted_addresses),
     }
 
-    res = _send_graphql_query_to_subgraph(
+    res: dict = _send_graphql_query_to_subgraph(
         chain, daily_share_price_query, variables, api_key
     )
     return _format_price_history_response(res)
