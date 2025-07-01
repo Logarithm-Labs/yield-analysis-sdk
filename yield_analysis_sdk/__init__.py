@@ -8,6 +8,12 @@ __version__ = "0.1.0"
 __author__ = "Your Name"
 __email__ = "your.email@example.com"
 
+from .acp import (
+    extract_analysis_request,
+    extract_analysis_response,
+    extract_vault_registration_request,
+    extract_vault_registration_response,
+)
 from .analysis import analyze_yield_with_daily_share_price
 from .subgraph import get_daily_share_price_history_from_subgraph
 
@@ -15,6 +21,8 @@ from .subgraph import get_daily_share_price_history_from_subgraph
 from .type import (
     AnalysisRequest,
     AnalysisResponse,
+    VaultRegistrationRequest,
+    VaultRegistrationResponse,
     AuditStatus,
     Chain,
     PerformanceAnalysis,
@@ -35,7 +43,13 @@ __all__ = [
     "VaultPerformanceAnalysis",
     "AnalysisResponse",
     "SharePriceHistory",
+    "VaultRegistrationRequest",
+    "VaultRegistrationResponse",
     # Main functions
     "get_daily_share_price_history_from_subgraph",
     "analyze_yield_with_daily_share_price",
+    "extract_analysis_request",
+    "extract_analysis_response",
+    "extract_vault_registration_request",
+    "extract_vault_registration_response",
 ]

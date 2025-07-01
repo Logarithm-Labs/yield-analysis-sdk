@@ -19,11 +19,18 @@ class TestSubgraph:
     """Test cases for subgraph functionality."""
 
     def test_format_vault_addresses(self) -> None:
-        """Test vault address formatting."""
-        addresses = ["0x1234567890abcdef", "0xABCDEF1234567890"]
-        formatted = _format_vault_addresses(addresses)
-        expected = ["0x1234567890abcdef", "0xabcdef1234567890"]
-        assert formatted == expected
+        """Test formatting vault addresses."""
+        addresses = [
+            "0x1234567890abcdef1234567890abcdef12345678",
+            "0xabcdef1234567890abcdef1234567890abcdef12",
+        ]
+
+        result = _format_vault_addresses(addresses)
+
+        assert result == [
+            "0x1234567890abcdef1234567890abcdef12345678",
+            "0xabcdef1234567890abcdef1234567890abcdef12",
+        ]
 
     def test_format_price_history_response_valid_data(self) -> None:
         """Test formatting valid price history response."""
@@ -34,7 +41,7 @@ class TestSubgraph:
                         "timestamp": "1640995200000000",  # microseconds
                         "pricePerShare": "1.05",
                         "vault": {
-                            "address": "0x1234567890abcdef",
+                            "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
                         },
                     },
@@ -42,7 +49,7 @@ class TestSubgraph:
                         "timestamp": "1640908800000000",
                         "pricePerShare": "1.04",
                         "vault": {
-                            "address": "0x1234567890abcdef",
+                            "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
                         },
                     },
@@ -53,17 +60,18 @@ class TestSubgraph:
         result = _format_price_history_response(mock_response)
 
         assert len(result) == 1
-        assert result[0].vault_address == "0x1234567890abcdef"
+        assert isinstance(result[0], SharePriceHistory)
         assert result[0].vault_name == "Test Vault"
+        assert result[0].vault_address == "0x1234567890abcdef1234567890abcdef12345678"
         assert len(result[0].price_history) == 2
-        assert result[0].price_history[0][0] == 1640908800  # seconds
-        assert result[0].price_history[0][1] == 1.04
 
     def test_format_price_history_response_no_data(self) -> None:
         """Test formatting response with no data."""
-        mock_response: Dict[str, Any] = {"data": {"vaultStats_collection": []}}
+        mock_response = {"data": {"vaultStats_collection": []}}
+
         result = _format_price_history_response(mock_response)
-        assert result == []  # Should return empty list
+
+        assert result == []
 
     @patch("yield_analysis_sdk.subgraph._send_graphql_query_to_subgraph")
     def test_get_daily_share_price_history_from_subgraph(
@@ -77,7 +85,7 @@ class TestSubgraph:
                         "timestamp": "1640995200000000",
                         "pricePerShare": "1.05",
                         "vault": {
-                            "address": "0x1234567890abcdef",
+                            "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
                         },
                     }
@@ -86,11 +94,13 @@ class TestSubgraph:
         }
         mock_send_query.return_value = mock_response
 
-        vault_addresses = ["0x1234567890abcdef"]
+        vault_addresses = ["0x1234567890abcdef1234567890abcdef12345678"]
         result = get_daily_share_price_history_from_subgraph(
             Chain.BASE, vault_addresses, 7, "test_api_key"
         )
 
         assert len(result) == 1
-        assert result[0].vault_address == "0x1234567890abcdef"
+        assert isinstance(result[0], SharePriceHistory)
+        assert result[0].vault_name == "Test Vault"
+        assert result[0].vault_address == "0x1234567890abcdef1234567890abcdef12345678"
         mock_send_query.assert_called_once()

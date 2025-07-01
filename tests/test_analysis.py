@@ -22,7 +22,7 @@ class TestAnalysis:
         # Create SharePriceHistory object
         share_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=list(zip(timestamps, prices)),
         )
 
@@ -42,7 +42,7 @@ class TestAnalysis:
         # Test with empty price history
         empty_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=[],
         )
         with pytest.raises(
@@ -53,7 +53,7 @@ class TestAnalysis:
         # Test with single price
         single_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=[(1640995200, 1.0)],
         )
         with pytest.raises(
@@ -69,7 +69,7 @@ class TestAnalysis:
 
         share_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=list(zip(timestamps, prices)),
         )
 
@@ -96,7 +96,7 @@ class TestAnalysis:
 
         share_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=list(zip(timestamps, prices)),
         )
 
@@ -114,7 +114,7 @@ class TestAnalysis:
 
         share_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=list(zip(timestamps, prices)),
         )
 
@@ -137,7 +137,7 @@ class TestAnalysis:
 
         share_price_history = SharePriceHistory(
             vault_name="Test Vault",
-            vault_address="0x1234567890abcdef",
+            vault_address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=list(zip(timestamps, prices)),
         )
 

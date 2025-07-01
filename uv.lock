@@ -1909,6 +1909,7 @@ source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
     { name = "requests" },
+    { name = "virtuals-acp" },
 ]
 
 [package.dev-dependencies]
@@ -1918,13 +1919,13 @@ dev = [
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-cov" },
-    { name = "virtuals-acp" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "pydantic", specifier = ">=2.0.0" },
     { name = "requests", specifier = ">=2.25.0" },
+    { name = "virtuals-acp", specifier = ">=0.1.5" },
 ]
 
 [package.metadata.requires-dev]
@@ -1934,5 +1935,4 @@ dev = [
     { name = "mypy", specifier = ">=1.16.1" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
-    { name = "virtuals-acp", specifier = ">=0.1.5" },
 ]

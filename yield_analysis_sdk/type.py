@@ -66,6 +66,11 @@ class VaultRegistrationRequest(
     vault_address: str
 
 
+class VaultRegistrationResponse(BaseModel):
+    is_registered: bool
+    message: str
+
+
 class AnalysisRequest(ChainValidatorMixin, BaseModel):
     chain: Chain = Field(..., description="The chain of vaults to analyze")
     underlying_token: str = Field(
