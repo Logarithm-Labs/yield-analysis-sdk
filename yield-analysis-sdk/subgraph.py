@@ -1,0 +1,109 @@
+from requests import post
+from typing import List, Dict, Any, Tuple
+from pydantic import BaseModel
+from type import Chain
+
+class SharePriceHistory(BaseModel):
+    vault_name: str
+    vault_address: str
+    price_history: List[Tuple[int, float]]
+
+SUBGRAPH_QUERY_URLS = {
+    Chain.BASE: "https://gateway.thegraph.com/api/subgraphs/id/46pQKDXgcredBSK9cbGU8qEaPEpEZgQ72hSAkpWnKinJ",
+}
+
+daily_share_price_query = """
+query DailyPriceHistory($vault_addresses: [Bytes!], $length: Int!) {
+  vaultStats_collection(
+    interval: day
+    orderBy: timestamp
+    orderDirection: desc
+    first: $length
+    where: {
+        vault_: {
+            address_in: $vault_addresses
+        }
+    }
+  ) {
+    timestamp
+    pricePerShare
+    vault {
+      address
+      name
+    }
+  }
+}
+"""
+
+def _format_vault_addresses(addresses: List[str]) -> List[str]:
+    """Format vault addresses to lowercase for GraphQL compatibility"""
+    return [addr.lower() for addr in addresses]
+
+def _send_graphql_query_to_subgraph(chain: Chain, query: str, variables: Dict[str, Any], api_key: str,):
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {api_key}'
+    }
+
+    # Prepare the request payload
+    payload = {'query': query, 'variables': variables}
+    
+    # Send the GraphQL request to the Subgraph
+    response = post(SUBGRAPH_QUERY_URLS[chain], headers=headers, json=payload)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        result = response.json()
+        if 'errors' in result:
+            raise Exception(f"GraphQL errors: {result['errors']}")
+    else:
+        raise Exception(f"HTTP Error {response.status_code}: {response.text}")
+    
+    return result
+
+def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
+    if not res or 'data' not in res or not res['data']['vaultStats_collection']:
+        return "No data found for the specified vaults"
+    
+    history_by_vault = {}
+    
+    for entry in res['data']['vaultStats_collection']:
+        vault_address = entry['vault']['address']
+        vault_name = entry['vault']['name']
+        timestamp = int(entry['timestamp']) // 1000000  # Convert microseconds to seconds
+        price_per_share = float(entry['pricePerShare'])
+        
+        if vault_address not in history_by_vault:
+            history_by_vault[vault_address] = {
+                'vault_name': vault_name,
+                'vault_address': vault_address,
+                'price_history': []
+            }
+        
+        history_by_vault[vault_address]['price_history'].append((timestamp, price_per_share))
+    
+    # Sort price history by timestamp (newest first)
+    for vault_address in history_by_vault:
+        history_by_vault[vault_address]['price_history'].sort(key=lambda x: x[0], reverse=True)
+
+    return list(history_by_vault.values())
+
+def get_daily_share_price_history_from_subgraph(chain: Chain, vault_addresses: List[str], length: int, api_key: str) -> List[SharePriceHistory]:
+    """
+    Get the daily share price history from the subgraph for a list of vault addresses.
+    
+    Args:
+        chain: The blockchain chain to query.
+        vault_addresses: A list of vault addresses to query.
+        length: The number of days to query.
+        api_key: The API key for the subgraph.
+    """
+    formatted_addresses = _format_vault_addresses(vault_addresses)
+    
+    variables = {
+        "vault_addresses": formatted_addresses,
+        "length": length * len(formatted_addresses)
+    }
+    
+    res = _send_graphql_query_to_subgraph(chain, daily_share_price_query, variables, api_key)
+    return _format_price_history_response(res)
