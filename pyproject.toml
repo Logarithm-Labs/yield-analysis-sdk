@@ -1,9 +1,93 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "yield-analysis-sdk"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Python SDK for analyzing DeFi vault performance and yield metrics"
 readme = "README.md"
-requires-python = ">=3.12"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+keywords = ["defi", "yield", "analysis", "AI"]
+authors = [
+    {name = "Tal", email = "talcrypto@logarithm.fi"}
+]
 dependencies = [
+    "requests>=2.25.0",
+    "pydantic>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/yield-analysis-sdk"
+Documentation = "https://yield-analysis-sdk.readthedocs.io/"
+Repository = "https://github.com/yourusername/yield-analysis-sdk"
+Issues = "https://github.com/yourusername/yield-analysis-sdk/issues"
+
+[project.scripts]
+yield-analyzer = "yield_analysis_sdk.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["yield_analysis_sdk"]
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["yield_analysis_sdk"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--cov=yield_analysis_sdk",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
+    "mypy>=1.16.1",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
     "virtuals-acp>=0.1.5",
 ]
