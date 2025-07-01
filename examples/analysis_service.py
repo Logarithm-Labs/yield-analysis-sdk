@@ -10,6 +10,13 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
+from yield_analysis_sdk import (
+    extract_analysis_request,
+    extract_analysis_response,
+    extract_vault_registration_request,
+    extract_vault_registration_response,
+    normalize_address,
+)
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
 from yield_analysis_sdk.subgraph import get_daily_share_price_history_from_subgraph
 from yield_analysis_sdk.type import (
@@ -21,76 +28,16 @@ from yield_analysis_sdk.type import (
 
 from .env import CustomEnvSettings
 
+USDC_TOKEN_ADDRESS = {
+    Chain.BASE: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+}
 
-def validate_memo_content(memo_content: str) -> AnalysisRequest:
-    if not memo_content or not memo_content.strip():
-        raise ValueError("Memo content is empty")
-
-    try:
-        # Parse JSON
-        parsed_content = json.loads(memo_content)
-
-        if not isinstance(parsed_content, dict):
-            raise ValueError("Memo content must be a JSON object")
-
-        # Validate using Pydantic model
-        validated_content = AnalysisRequest(**parsed_content)
-
-        return validated_content
-
-    except json.JSONDecodeError as e:
-        raise
-
-    except ValidationError as e:
-        raise
-
-    except (KeyError, TypeError) as e:
-        raise
-
-
-def extract_request(memos: list[ACPMemo]) -> Optional[AnalysisRequest]:
-    if not memos:
-        return None
-
-    for memo in memos:
-        if memo.next_phase == ACPJobPhase.NEGOTIATION:
-            if memo.content:
-                return validate_memo_content(memo.content)
-            else:
-                raise ValueError("Memo content is empty")
-
-    raise ValueError("No negotiation memo found")
-
-
-def run_analysis_with_event_loop(analyzer: Analyzer, lookback_window_in_days: int):
-    """
-    Run analysis in a new event loop to handle async operations.
-
-    Args:
-        analyzer: Analyzer instance
-        lookback_window_in_days: Lookback window for analysis
-
-    Returns:
-        Analysis result
-    """
-    try:
-        # Create a new event loop for this thread
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
-        # Run the analysis
-        result = analyzer.run_openai_analysis(lookback_window_in_days)
-
-        return result
-    except Exception as e:
-        print(f"Error in analysis thread: {e}")
-        raise
-    finally:
-        # Clean up the event loop
-        try:
-            loop.close()
-        except:
-            pass
+USDC_VAULT_ADDRESSES = {
+    Chain.BASE: [
+        "0x1234567890abcdef1234567890abcdef12345678",
+        "0xabcdef1234567890abcdef1234567890abcdef12",
+    ]
+}
 
 
 def seller():
@@ -105,38 +52,40 @@ def seller():
                     job.respond(True)
                     break
         elif job.phase == ACPJobPhase.TRANSACTION:
-            # Extract and validate lookback window from memos
-            lookback_window_in_days = extract_request(job.memos, default_lookback=14)
-
             # Check if there's a memo that indicates next phase is EVALUATION
+            analysis_request = extract_analysis_request(job.memos)
+
+            if analysis_request is None:
+                return
+
+            if analysis_request.chain != Chain.BASE:
+                return
+
+            if analysis_request.underlying_token != normalize_address(
+                USDC_TOKEN_ADDRESS[analysis_request.chain]
+            ):
+                return
+
             for memo in job.memos:
                 if memo.next_phase == ACPJobPhase.EVALUATION:
-                    try:
-                        analyzer = Analyzer(env.SUBGRAPH_API_KEY)
-                        # Run analysis in a separate thread with its own event loop
-                        analysis_result = run_analysis_with_event_loop(
-                            analyzer, lookback_window_in_days
-                        )
-                        if analysis_result.is_complete:
-                            print(
-                                f"Delivering job with {analysis_result.summary}\n", job
-                            )
-                            job.deliver(analysis_result.summary)
-                        else:
-                            print(
-                                f"Analysis is not complete: {analysis_result.summary}"
-                            )
-                    except Exception as e:
-                        print(f"Error during analysis: {e}")
-                    finally:
-                        break
-                    # print("Delivering job", job)
-                    # delivery_data = {
-                    #     "type": "url",
-                    #     "value": "https://example.com"
-                    # }
-                    # job.deliver(json.dumps(delivery_data))
-                    # break
+                    # fetch price history
+                    price_history = get_daily_share_price_history_from_subgraph(
+                        analysis_request.chain,
+                        USDC_VAULT_ADDRESSES[analysis_request.chain],
+                        90,
+                        env.SUBGRAPH_API_KEY,
+                    )
+
+                    # analyze yield
+                    analysis_response = analyze_yield_with_daily_share_price(
+                        price_history,
+                        analysis_request.chain,
+                    )
+
+                    # deliver job
+                    print(analysis_response)
+                    job.deliver(analysis_response.model_dump_json())
+                    break
 
     if env.WHITELISTED_WALLET_PRIVATE_KEY is None:
         raise ValueError("WHITELISTED_WALLET_PRIVATE_KEY is not set")
