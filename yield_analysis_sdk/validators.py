@@ -35,7 +35,19 @@ class VaultAddressValidatorMixin:
     def validate_vault_address(cls, v: Any) -> str:
         """Validate vault address format and normalize it."""
         if isinstance(v, str):
-            return normalize_vault_address(v)
+            return normalize_address(v)
+        return v
+
+
+class UnderlyingTokenValidatorMixin:
+    """Mixin class that provides token address validation functionality."""
+
+    @field_validator("underlying_token", mode="before")
+    @classmethod
+    def validate_underlying_token(cls, v: Any) -> str:
+        """Validate underlying token address format and normalize it."""
+        if isinstance(v, str):
+            return normalize_address(v)
         return v
 
 
@@ -59,18 +71,18 @@ def validate_chain_value(value: Any) -> "Chain":
     return value
 
 
-def normalize_vault_address(address: str) -> str:
+def normalize_address(address: str) -> str:
     """
-    Normalize vault address format.
+    Normalize address format.
 
     Args:
-        address: The vault address to normalize
+        address: The address to normalize
 
     Returns:
-        Normalized vault address (lowercase, with 0x prefix)
+        Normalized address (lowercase, with 0x prefix)
     """
     if not address:
-        raise ValueError("Vault address cannot be empty")
+        raise ValueError("Address cannot be empty")
 
     # Remove whitespace
     address = address.strip()
@@ -84,22 +96,22 @@ def normalize_vault_address(address: str) -> str:
 
     # Validate format (0x followed by 40 hex characters)
     if not re.match(r"^0x[a-f0-9]{40}$", address):
-        raise ValueError(f"Invalid vault address format: {address}")
+        raise ValueError(f"Invalid address format: {address}")
 
     return address
 
 
-def validate_vault_address_value(address: str) -> str:
+def validate_address_value(address: str) -> str:
     """
-    Standalone function to validate vault address values.
+    Standalone function to validate address values.
 
     Args:
-        address: The vault address to validate
+        address: The address to validate
 
     Returns:
-        Normalized vault address
+        Normalized address
 
     Raises:
         ValueError: If the address format is invalid
     """
-    return normalize_vault_address(address)
+    return normalize_address(address)

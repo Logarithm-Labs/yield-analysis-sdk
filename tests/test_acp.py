@@ -28,9 +28,7 @@ class TestACP:
         # Create mock memos
         valid_memo = Mock(spec=ACPMemo)
         valid_memo.next_phase = ACPJobPhase.NEGOTIATION
-        valid_memo.content = (
-            '{"chain": "base", "underlying_token": "0x1234567890abcdef"}'
-        )
+        valid_memo.content = '{"chain": "base", "underlying_token": "0x1234567890abcdef1234567890abcdef12345678"}'
 
         memos = [valid_memo]
 
@@ -39,7 +37,7 @@ class TestACP:
         assert result is not None
         assert isinstance(result, AnalysisRequest)
         assert result.chain == Chain.BASE
-        assert result.underlying_token == "0x1234567890abcdef"
+        assert result.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
 
     def test_extract_analysis_request_multiple_memos(self) -> None:
         """Test extraction with multiple memos, where first fails but second succeeds."""
@@ -50,9 +48,7 @@ class TestACP:
 
         valid_memo = Mock(spec=ACPMemo)
         valid_memo.next_phase = ACPJobPhase.NEGOTIATION
-        valid_memo.content = (
-            '{"chain": "ethereum", "underlying_token": "0xabcdef1234567890"}'
-        )
+        valid_memo.content = '{"chain": "ethereum", "underlying_token": "0xabcdef1234567890abcdef1234567890abcdef12"}'
 
         memos = [invalid_memo, valid_memo]
 
@@ -61,20 +57,18 @@ class TestACP:
         assert result is not None
         assert isinstance(result, AnalysisRequest)
         assert result.chain == Chain.ETHEREUM
-        assert result.underlying_token == "0xabcdef1234567890"
+        assert result.underlying_token == "0xabcdef1234567890abcdef1234567890abcdef12"
 
     def test_extract_analysis_request_no_negotiation_memos(self) -> None:
         """Test when no memos have NEGOTIATION phase."""
         # Create mock memos with different phases
         memo1 = Mock(spec=ACPMemo)
         memo1.next_phase = ACPJobPhase.TRANSACTION
-        memo1.content = '{"chain": "base", "underlying_token": "0x1234567890abcdef"}'
+        memo1.content = '{"chain": "base", "underlying_token": "0x1234567890abcdef1234567890abcdef12345678"}'
 
         memo2 = Mock(spec=ACPMemo)
         memo2.next_phase = ACPJobPhase.COMPLETED
-        memo2.content = (
-            '{"chain": "ethereum", "underlying_token": "0xabcdef1234567890"}'
-        )
+        memo2.content = '{"chain": "ethereum", "underlying_token": "0xabcdef1234567890abcdef1234567890abcdef12"}'
 
         memos = [memo1, memo2]
 
@@ -126,9 +120,7 @@ class TestACP:
         # Create mock memo with unknown chain
         memo = Mock(spec=ACPMemo)
         memo.next_phase = ACPJobPhase.NEGOTIATION
-        memo.content = (
-            '{"chain": "unknown_chain", "underlying_token": "0x1234567890abcdef"}'
-        )
+        memo.content = '{"chain": "unknown_chain", "underlying_token": "0x1234567890abcdef1234567890abcdef12345678"}'
 
         memos = [memo]
 
@@ -137,7 +129,7 @@ class TestACP:
         assert result is not None
         assert isinstance(result, AnalysisRequest)
         assert result.chain == Chain.OTHER
-        assert result.underlying_token == "0x1234567890abcdef"
+        assert result.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
 
     def test_extract_analysis_response_success(self) -> None:
         """Test successful extraction of AnalysisResponse from memos."""
@@ -285,9 +277,7 @@ class TestACP:
         # Create various types of memos
         analysis_request_memo = Mock(spec=ACPMemo)
         analysis_request_memo.next_phase = ACPJobPhase.NEGOTIATION
-        analysis_request_memo.content = (
-            '{"chain": "base", "underlying_token": "0x1234567890abcdef"}'
-        )
+        analysis_request_memo.content = '{"chain": "base", "underlying_token": "0x1234567890abcdef1234567890abcdef12345678"}'
 
         vault_reg_request_memo = Mock(spec=ACPMemo)
         vault_reg_request_memo.next_phase = ACPJobPhase.NEGOTIATION

@@ -3,7 +3,11 @@ from typing import List, Tuple
 
 from pydantic import BaseModel, Field
 
-from .validators import ChainValidatorMixin, VaultAddressValidatorMixin
+from .validators import (
+    ChainValidatorMixin,
+    VaultAddressValidatorMixin,
+    UnderlyingTokenValidatorMixin,
+)
 
 
 class Chain(Enum):
@@ -23,7 +27,7 @@ class Chain(Enum):
 
     @classmethod
     def _missing_(cls, value):
-        """Handle unknown values by returning OTHER."""
+        """Handle unknown chain values by returning OTHER."""
         return cls.OTHER
 
 
@@ -71,7 +75,7 @@ class VaultRegistrationResponse(BaseModel):
     message: str
 
 
-class AnalysisRequest(ChainValidatorMixin, BaseModel):
+class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
     chain: Chain = Field(..., description="The chain of vaults to analyze")
     underlying_token: str = Field(
         ..., description="The underlying token of vaults to analyze"

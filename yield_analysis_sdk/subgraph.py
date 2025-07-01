@@ -3,7 +3,7 @@ from typing import Any, Dict, List
 from requests import post
 
 from .type import Chain, SharePriceHistory
-from .validators import validate_vault_address_value
+from .validators import validate_address_value
 
 SUBGRAPH_QUERY_URLS = {
     Chain.BASE: "https://gateway.thegraph.com/api/subgraphs/id/46pQKDXgcredBSK9cbGU8qEaPEpEZgQ72hSAkpWnKinJ",
@@ -35,7 +35,7 @@ query DailyPriceHistory($vault_addresses: [Bytes!], $length: Int!) {
 
 def _format_vault_addresses(addresses: List[str]) -> List[str]:
     """Format vault addresses to lowercase for GraphQL compatibility"""
-    return [validate_vault_address_value(addr) for addr in addresses]
+    return [validate_address_value(addr) for addr in addresses]
 
 
 def _send_graphql_query_to_subgraph(
