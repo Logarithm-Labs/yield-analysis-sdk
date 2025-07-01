@@ -47,8 +47,8 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 class AnalysisRequest(BaseModel):
-    lookback_window_in_days: int = Field(..., description="The lookback window in days")
-
+    chain: Chain = Field(..., description="The chain of vaults to analyze")
+    underlying_token: str = Field(..., description="The underlying token of vaults to analyze")
 
 class VaultInfo(BaseModel):
     # Basic Vault Information
@@ -57,15 +57,17 @@ class VaultInfo(BaseModel):
     vault_name: str
     
     # Fee Structure (Critical for allocation decisions)
-    entry_fee_percentage: float = Field(0.0, description="Entry fee as percentage")
-    exit_fee_percentage: float = Field(0.0, description="Exit fee as percentage")
+    entry_fee_bps: float = Field(0.0, description="Entry fee rate in basis points")
+    exit_fee_bps: float = Field(0.0, description="Exit fee rate in basis points")
+
+    # Vault Capacity
+    max_deposit_amount: float = Field(..., description="Maximum amount of underlying token that can be deposited into the vault")
     
     # Analysis Context
     risk_free_rate: float = Field(0.05, description="Risk-free rate used for Sharpe ratio calculation")
     
     # Analysis Metadata
     last_updated_timestamp: int = Field(..., description="Last update timestamp in seconds")
-    data_source: Optional[str] = Field(None, description="Source of the data")
 
 class PerformanceAnalysis(BaseModel):
     # Core Performance Metrics (Mandatory for allocation decisions)
@@ -91,7 +93,5 @@ class VaultPerformanceAnalysis(BaseModel):
 
 class AnalysisResponse(BaseModel):
     analyses: list[VaultPerformanceAnalysis] = Field(..., description="List of vault analyses")
-    total_count: int = Field(..., description="Total number of analyses")
-    request_id: Optional[str] = Field(None, description="Request identifier for tracking")
 
 
