@@ -70,6 +70,11 @@ class VaultRegistrationRequest(
     vault_address: str
 
 
+class VaultRegistrationResponse(BaseModel):
+    is_registered: bool
+    message: str
+    contract_tx_hash: Optional[str] = None
+
 class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
     chain: Chain = Field(..., description="The chain of vaults to analyze")
     underlying_token: str = Field(
