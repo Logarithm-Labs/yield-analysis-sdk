@@ -9,16 +9,13 @@ from virtuals_acp import ACPJobPhase, ACPMemo
 
 from yield_analysis_sdk.acp import (
     extract_analysis_request,
-    extract_analysis_response,
     extract_vault_registration_request,
-    extract_vault_registration_response,
 )
 from yield_analysis_sdk.type import (
     AnalysisRequest,
     AnalysisResponse,
     Chain,
     VaultRegistrationRequest,
-    VaultRegistrationResponse,
 )
 
 
@@ -133,63 +130,6 @@ class TestACP:
         assert result.chain == Chain.OTHER
         assert result.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
 
-    def test_extract_analysis_response_success(self) -> None:
-        """Test successful extraction of AnalysisResponse from memos."""
-        # Create mock memos with valid analysis response
-        vault_info = {
-            "chain": "base",
-            "vault_address": "0x1234567890abcdef1234567890abcdef12345678",
-            "vault_name": "Test Vault",
-            "max_deposit_amount": 1000000.0,
-            "last_updated_timestamp": 1640995200,
-            "entry_fee_bps": 0.0,
-            "exit_fee_bps": 0.0,
-            "risk_free_rate": 0.05,
-        }
-
-        performance = {
-            "apy_7d": 5.2,
-            "apy_30d": 4.8,
-            "apy_90d": 4.5,
-            "volatility_30d": 2.1,
-            "max_drawdown": 1.5,
-            "sharpe_ratio": 1.2,
-            "current_price": 1.05,
-            "analysis_period_days": 90,
-        }
-
-        vault_analysis = {"vault_info": vault_info, "performance": performance}
-
-        analysis_response = {"analyses": [vault_analysis]}
-
-        valid_memo = Mock(spec=ACPMemo)
-        valid_memo.next_phase = ACPJobPhase.COMPLETED
-        valid_memo.content = str(analysis_response).replace("'", '"')
-
-        memos = [valid_memo]
-
-        result = extract_analysis_response(memos)
-
-        assert result is not None
-        assert isinstance(result, AnalysisResponse)
-        assert len(result.analyses) == 1
-
-    def test_extract_analysis_response_no_completed_memos(self) -> None:
-        """Test when no memos have COMPLETED phase."""
-        memo1 = Mock(spec=ACPMemo)
-        memo1.next_phase = ACPJobPhase.NEGOTIATION
-        memo1.content = '{"test": "data"}'
-
-        memo2 = Mock(spec=ACPMemo)
-        memo2.next_phase = ACPJobPhase.TRANSACTION
-        memo2.content = '{"test": "data"}'
-
-        memos = [memo1, memo2]
-
-        result = extract_analysis_response(memos)
-
-        assert result is None
-
     def test_extract_vault_registration_request_success(self) -> None:
         """Test successful extraction of VaultRegistrationRequest from memos."""
         # Create mock memos
@@ -222,58 +162,6 @@ class TestACP:
         assert result.chain == Chain.ETHEREUM
         assert result.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
 
-    def test_extract_vault_registration_response_success(self) -> None:
-        """Test successful extraction of VaultRegistrationResponse from memos."""
-        # Create mock memos
-        valid_memo = Mock(spec=ACPMemo)
-        valid_memo.next_phase = ACPJobPhase.COMPLETED
-        valid_memo.content = (
-            '{"is_registered": true, "message": "Vault registered successfully"}'
-        )
-
-        memos = [valid_memo]
-
-        result = extract_vault_registration_response(memos)
-
-        assert result is not None
-        assert isinstance(result, VaultRegistrationResponse)
-        assert result.is_registered is True
-        assert result.message == "Vault registered successfully"
-
-    def test_extract_vault_registration_response_failure(self) -> None:
-        """Test extraction of failed vault registration response."""
-        # Create mock memos
-        valid_memo = Mock(spec=ACPMemo)
-        valid_memo.next_phase = ACPJobPhase.COMPLETED
-        valid_memo.content = (
-            '{"is_registered": false, "message": "Vault registration failed"}'
-        )
-
-        memos = [valid_memo]
-
-        result = extract_vault_registration_response(memos)
-
-        assert result is not None
-        assert isinstance(result, VaultRegistrationResponse)
-        assert result.is_registered is False
-        assert result.message == "Vault registration failed"
-
-    def test_extract_vault_registration_response_no_completed_memos(self) -> None:
-        """Test when no memos have COMPLETED phase for vault registration."""
-        memo1 = Mock(spec=ACPMemo)
-        memo1.next_phase = ACPJobPhase.NEGOTIATION
-        memo1.content = '{"test": "data"}'
-
-        memo2 = Mock(spec=ACPMemo)
-        memo2.next_phase = ACPJobPhase.TRANSACTION
-        memo2.content = '{"test": "data"}'
-
-        memos = [memo1, memo2]
-
-        result = extract_vault_registration_response(memos)
-
-        assert result is None
-
     def test_all_extractors_with_mixed_memos(self) -> None:
         """Test all extractors with a mix of different memo types."""
         # Create various types of memos
@@ -305,14 +193,9 @@ class TestACP:
         # Test each extractor
         analysis_request = extract_analysis_request(memos)
         vault_reg_request = extract_vault_registration_request(memos)
-        analysis_response = extract_analysis_response(memos)
-        vault_reg_response = extract_vault_registration_response(memos)
 
         assert analysis_request is not None
         assert vault_reg_request is not None
-        assert analysis_response is not None
-        assert vault_reg_response is not None
 
         assert analysis_request.chain == Chain.BASE
         assert vault_reg_request.chain == Chain.ETHEREUM
-        assert vault_reg_response.is_registered is True

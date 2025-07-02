@@ -11,6 +11,7 @@ from yield_analysis_sdk import (
     Chain,
     VaultRegistrationRequest,
     VaultRegistrationResponse,
+    extract_vault_registration_response,
 )
 
 load_dotenv(override=True)
@@ -30,7 +31,7 @@ def buyer():
                     job.pay(job.price)
                     break
         elif job.phase == ACPJobPhase.COMPLETED:
-            print("Job completed", job)
+            print("Job completed", job.deliverable)
         elif job.phase == ACPJobPhase.REJECTED:
             print("Job rejected", job)
 
@@ -73,7 +74,7 @@ def buyer():
         # Reference: (./images/specify_requirement_toggle_switch.png)
         service_requirement=VaultRegistrationRequest(
             chain=Chain.BASE, vault_address=VAULT_USDC_MORPHO_SPARK
-        ),
+        ).model_dump_json(),
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,
         expired_at=datetime.now() + timedelta(days=1),
     )

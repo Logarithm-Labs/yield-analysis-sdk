@@ -10,9 +10,7 @@ __email__ = "dev@logarithm.fi"
 
 from .acp import (
     extract_analysis_request,
-    extract_analysis_response,
     extract_vault_registration_request,
-    extract_vault_registration_response,
 )
 from .analysis import analyze_yield_with_daily_share_price
 from .exceptions import (
@@ -36,7 +34,6 @@ from .type import (
     VaultInfo,
     VaultPerformanceAnalysis,
     VaultRegistrationRequest,
-    VaultRegistrationResponse,
 )
 from .validators import normalize_address
 
@@ -52,14 +49,11 @@ __all__ = [
     "AnalysisResponse",
     "SharePriceHistory",
     "VaultRegistrationRequest",
-    "VaultRegistrationResponse",
     # Main functions
     "get_daily_share_price_history_from_subgraph",
     "analyze_yield_with_daily_share_price",
     "extract_analysis_request",
-    "extract_analysis_response",
     "extract_vault_registration_request",
-    "extract_vault_registration_response",
     "normalize_address",
     # Exceptions
     "YieldAnalysisError",
