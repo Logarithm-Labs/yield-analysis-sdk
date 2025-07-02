@@ -17,6 +17,7 @@ from .acp import (
 from .analysis import analyze_yield_with_daily_share_price
 from .subgraph import get_daily_share_price_history_from_subgraph
 from .validators import normalize_address
+from .exceptions import YieldAnalysisError, DataError, ConfigurationError, ConnectionError, ValidationError
 
 # Import main classes and functions for public API
 from .type import (
@@ -54,4 +55,10 @@ __all__ = [
     "extract_vault_registration_request",
     "extract_vault_registration_response",
     "normalize_address",
+    # Exceptions
+    "YieldAnalysisError",
+    "DataError",
+    "ConfigurationError",
+    "ConnectionError",
+    "ValidationError"
 ]

@@ -1,6 +1,4 @@
-import time
-import json
-import asyncio
+import threading
 from typing import Dict, Any, Optional
 from pydantic import BaseModel, Field, ValidationError
 
@@ -100,10 +98,9 @@ def seller():
         entity_id=env.SELLER_ENTITY_ID,
     )
 
+    print("Waiting for new task...")
     # Keep the script running to listen for new tasks
-    while True:
-        print("Waiting for new task...")
-        time.sleep(30)
+    threading.Event().wait()
 
 
 if __name__ == "__main__":
