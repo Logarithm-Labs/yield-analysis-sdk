@@ -34,6 +34,7 @@ from .type import (
     VaultInfo,
     VaultPerformanceAnalysis,
     VaultRegistrationRequest,
+    VaultRegistrationResponse,
 )
 from .validators import normalize_address
 
@@ -49,6 +50,7 @@ __all__ = [
     "AnalysisResponse",
     "SharePriceHistory",
     "VaultRegistrationRequest",
+    "VaultRegistrationResponse",
     # Main functions
     "get_daily_share_price_history_from_subgraph",
     "analyze_yield_with_daily_share_price",
