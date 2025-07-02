@@ -23,6 +23,8 @@ pip install git+ssh://git@github.com/Logarithm-Labs/yield-analysis-sdk.git#egg=y
 For detailed usage examples, see the `examples/` directory:
 
 - **`examples/analysis_service.py`**: Analysis service implementation
+  - Note: Do NOT add input/output requirements through the ACP UI when using this SDK setup
+  - Flexible data sources: Uses subgraph for price fetching, but alternative data sources can be configured
 - **`examples/registration.py`**: Vault registration and job management
 
 ### Basic Usage
