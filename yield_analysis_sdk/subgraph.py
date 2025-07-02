@@ -4,6 +4,7 @@ from requests import post
 
 from .type import Chain, SharePriceHistory
 from .validators import validate_address_value
+from .exceptions import ConnectionError, ConfigurationError
 
 SUBGRAPH_QUERY_URLS = {
     Chain.BASE: "https://gateway.thegraph.com/api/subgraphs/id/46pQKDXgcredBSK9cbGU8qEaPEpEZgQ72hSAkpWnKinJ",
@@ -56,9 +57,9 @@ def _send_graphql_query_to_subgraph(
     if response.status_code == 200:
         result = response.json()
         if "errors" in result:
-            raise Exception(f"GraphQL errors: {result['errors']}")
+            raise ConnectionError(f"GraphQL errors: {result['errors']}")
     else:
-        raise Exception(f"HTTP Error {response.status_code}: {response.text}")
+        raise ConnectionError(f"HTTP Error {response.status_code}: {response.text}")
 
     return result
 
@@ -117,6 +118,9 @@ def get_daily_share_price_history_from_subgraph(
         length: The number of days to query.
         api_key: The API key for the subgraph.
     """
+    if not api_key:
+        raise ConfigurationError("SUBGRAPH_API_KEY is required")
+
     formatted_addresses = _format_vault_addresses(vault_addresses)
 
     variables = {

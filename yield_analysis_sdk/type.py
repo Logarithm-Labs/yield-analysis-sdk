@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -73,7 +73,7 @@ class VaultRegistrationRequest(
 class VaultRegistrationResponse(BaseModel):
     is_registered: bool
     message: str
-    contract_tx_hash: str
+    contract_tx_hash: Optional[str] = None
 
 
 class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):

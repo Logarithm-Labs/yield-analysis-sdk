@@ -6,7 +6,7 @@ import pytest
 
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
 from yield_analysis_sdk.type import PerformanceAnalysis, SharePriceHistory
-
+from yield_analysis_sdk.exceptions import DataError
 
 class TestAnalysis:
     """Test cases for yield analysis functionality."""
@@ -46,7 +46,7 @@ class TestAnalysis:
             price_history=[],
         )
         with pytest.raises(
-            ValueError, match="At least 2 daily share prices are required"
+            DataError, match="At least 2 daily share prices are required"
         ):
             analyze_yield_with_daily_share_price(empty_history)
 
@@ -57,7 +57,7 @@ class TestAnalysis:
             price_history=[(1640995200, 1.0)],
         )
         with pytest.raises(
-            ValueError, match="At least 2 daily share prices are required"
+            DataError, match="At least 2 daily share prices are required"
         ):
             analyze_yield_with_daily_share_price(single_price_history)
 

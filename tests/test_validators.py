@@ -13,7 +13,7 @@ from yield_analysis_sdk.validators import (
     UnderlyingTokenValidatorMixin,
 )
 from yield_analysis_sdk.type import Chain
-
+from yield_analysis_sdk.exceptions import ValidationError
 
 class TestValidators:
     """Test cases for validator functionality."""
@@ -81,23 +81,23 @@ class TestValidators:
     def test_normalize_address_invalid(self) -> None:
         """Test normalizing invalid addresses."""
         # Test empty address
-        with pytest.raises(ValueError, match="Address cannot be empty"):
+        with pytest.raises(ValidationError, match="Address cannot be empty"):
             normalize_address("")
 
         # Test None address
-        with pytest.raises(ValueError, match="Address cannot be empty"):
+        with pytest.raises(ValidationError, match="Address cannot be empty"):
             normalize_address(None)
 
         # Test too short address
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             normalize_address("0x1234567890abcdef")
 
         # Test too long address
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             normalize_address("0x1234567890abcdef1234567890abcdef1234567890abcdef")
 
         # Test invalid characters
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             normalize_address("0x1234567890abcdef1234567890abcdef1234567g")
 
     def test_validate_address_value(self) -> None:
@@ -111,7 +111,7 @@ class TestValidators:
         assert result == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test invalid address
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             validate_address_value("0x1234567890abcdef")
 
     def test_vault_address_validator_mixin(self) -> None:
@@ -129,7 +129,7 @@ class TestValidators:
         assert model.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test with invalid address
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             TestModel(vault_address="0x1234567890abcdef")
 
     def test_token_address_validator_mixin(self) -> None:
@@ -147,7 +147,7 @@ class TestValidators:
         assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test with invalid address
-        with pytest.raises(ValueError, match="Invalid address format"):
+        with pytest.raises(ValidationError, match="Invalid address format"):
             TestModel(underlying_token="0x1234567890abcdef")
 
     def test_combined_validators(self) -> None:

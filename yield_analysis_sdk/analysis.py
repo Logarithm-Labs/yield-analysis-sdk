@@ -2,7 +2,7 @@ import math
 from typing import List, Tuple
 
 from .type import PerformanceAnalysis, SharePriceHistory
-
+from .exceptions import DataError
 
 def analyze_yield_with_daily_share_price(
     share_price_history: SharePriceHistory, risk_free_rate: float = 0.05
@@ -11,7 +11,7 @@ def analyze_yield_with_daily_share_price(
     Analyze yield metrics from daily share price data and return essential metrics for allocation decisions.
 
     Args:
-        share_price_history: List of daily share prices (most recent first)
+        share_price_history: SharePriceHistory object containing daily share prices
         risk_free_rate: Annual risk-free rate (default 0.05 = 5% for current market conditions)
 
     Returns:
@@ -21,7 +21,7 @@ def analyze_yield_with_daily_share_price(
     daily_share_price: List[Tuple[int, float]] = share_price_history.price_history
 
     if not daily_share_price or len(daily_share_price) < 2:
-        raise ValueError("At least 2 daily share prices are required for analysis")
+        raise DataError("At least 2 daily share prices are required for analysis")
 
     # sort daily_share_price by timestamp in ascending order
     daily_share_price.sort(key=lambda x: x[0])
@@ -35,13 +35,10 @@ def analyze_yield_with_daily_share_price(
             daily_return = (prices[i] - prices[i - 1]) / prices[i - 1]
             daily_returns.append(daily_return)
 
-    if not daily_returns:
-        raise ValueError("Unable to calculate returns from provided price data")
-
     # Calculate core APY metrics (7d, 30d, and 90d are most important for allocation decisions)
-    apy_7d = _calculate_apy(prices, 7) if len(prices) >= 7 else 0.0
-    apy_30d = _calculate_apy(prices, 30) if len(prices) >= 30 else 0.0
-    apy_90d = _calculate_apy(prices, 90) if len(prices) >= 90 else 0.0
+    apy_7d = _calculate_apy(prices, 7)
+    apy_30d = _calculate_apy(prices, 30)
+    apy_90d = _calculate_apy(prices, 90)
 
     # Calculate essential risk metrics
     volatility_30d = _calculate_volatility(daily_returns, 30)

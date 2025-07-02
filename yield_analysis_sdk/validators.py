@@ -5,6 +5,7 @@ Common validators and mixins for the yield analysis SDK.
 import re
 from typing import Any, TYPE_CHECKING, Union
 from pydantic import field_validator
+from .exceptions import ValidationError
 
 if TYPE_CHECKING:
     from .type import Chain
@@ -40,7 +41,7 @@ class VaultAddressValidatorMixin:
         if isinstance(v, str):
             return normalize_address(v)
         elif v is None:
-            raise ValueError("Vault address cannot be None")
+            raise ValidationError("Vault address cannot be None")
         else:
             return str(v)
 
@@ -55,7 +56,7 @@ class UnderlyingTokenValidatorMixin:
         if isinstance(v, str):
             return normalize_address(v)
         elif v is None:
-            raise ValueError("Underlying token cannot be None")
+            raise ValidationError("Underlying token cannot be None")
         else:
             return str(v)
 
@@ -94,7 +95,7 @@ def normalize_address(address: str) -> str:
         Normalized address (lowercase, with 0x prefix)
     """
     if not address:
-        raise ValueError("Address cannot be empty")
+        raise ValidationError("Address cannot be empty")
 
     # Remove whitespace
     address = address.strip()
@@ -108,7 +109,7 @@ def normalize_address(address: str) -> str:
 
     # Validate format (0x followed by 40 hex characters)
     if not re.match(r"^0x[a-f0-9]{40}$", address):
-        raise ValueError(f"Invalid address format: {address}")
+        raise ValidationError(f"Invalid address format: {address}")
 
     return address
 
@@ -124,6 +125,6 @@ def validate_address_value(address: str) -> str:
         Normalized address
 
     Raises:
-        ValueError: If the address format is invalid
+        ValidationError: If the address format is invalid
     """
     return normalize_address(address)
