@@ -1,12 +1,13 @@
 import threading
-from typing import Dict, Any, Optional
-from pydantic import BaseModel, Field, ValidationError
-
-from virtuals_acp import VirtualsACP, ACPJob, ACPJobPhase, ACPMemo
+from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field, ValidationError
+from virtuals_acp import ACPJob, ACPJobPhase, ACPMemo, VirtualsACP
 
 load_dotenv(override=True)
+
+from virtuals_acp.env import EnvSettings
 
 from yield_analysis_sdk import (
     extract_analysis_request,
@@ -18,13 +19,16 @@ from yield_analysis_sdk import (
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
 from yield_analysis_sdk.subgraph import get_daily_share_price_history_from_subgraph
 from yield_analysis_sdk.type import (
-    Chain,
-    SharePriceHistory,
     AnalysisRequest,
     AnalysisResponse,
+    Chain,
+    SharePriceHistory,
 )
 
-from .env import CustomEnvSettings
+
+class CustomEnvSettings(EnvSettings):
+    SUBGRAPH_API_KEY: Optional[str] = None
+
 
 USDC_TOKEN_ADDRESS = {
     Chain.BASE: "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",

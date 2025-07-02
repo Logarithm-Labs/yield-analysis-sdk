@@ -4,16 +4,18 @@ Tests for the validators module.
 
 import pytest
 from pydantic import BaseModel
+
+from yield_analysis_sdk.exceptions import ValidationError
+from yield_analysis_sdk.type import Chain
 from yield_analysis_sdk.validators import (
-    validate_chain_value,
+    ChainValidatorMixin,
+    UnderlyingTokenValidatorMixin,
+    VaultAddressValidatorMixin,
     normalize_address,
     validate_address_value,
-    ChainValidatorMixin,
-    VaultAddressValidatorMixin,
-    UnderlyingTokenValidatorMixin,
+    validate_chain_value,
 )
-from yield_analysis_sdk.type import Chain
-from yield_analysis_sdk.exceptions import ValidationError
+
 
 class TestValidators:
     """Test cases for validator functionality."""

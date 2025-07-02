@@ -15,16 +15,19 @@ from .acp import (
     extract_vault_registration_response,
 )
 from .analysis import analyze_yield_with_daily_share_price
+from .exceptions import (
+    ConfigurationError,
+    ConnectionError,
+    DataError,
+    ValidationError,
+    YieldAnalysisError,
+)
 from .subgraph import get_daily_share_price_history_from_subgraph
-from .validators import normalize_address
-from .exceptions import YieldAnalysisError, DataError, ConfigurationError, ConnectionError, ValidationError
 
 # Import main classes and functions for public API
 from .type import (
     AnalysisRequest,
     AnalysisResponse,
-    VaultRegistrationRequest,
-    VaultRegistrationResponse,
     AuditStatus,
     Chain,
     PerformanceAnalysis,
@@ -32,7 +35,10 @@ from .type import (
     StrategyType,
     VaultInfo,
     VaultPerformanceAnalysis,
+    VaultRegistrationRequest,
+    VaultRegistrationResponse,
 )
+from .validators import normalize_address
 
 __all__ = [
     # Types and enums
@@ -60,5 +66,5 @@ __all__ = [
     "DataError",
     "ConfigurationError",
     "ConnectionError",
-    "ValidationError"
+    "ValidationError",
 ]

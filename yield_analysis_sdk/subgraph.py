@@ -2,9 +2,9 @@ from typing import Any, Dict, List
 
 from requests import post
 
+from .exceptions import ConfigurationError, ConnectionError
 from .type import Chain, SharePriceHistory
 from .validators import validate_address_value
-from .exceptions import ConnectionError, ConfigurationError
 
 SUBGRAPH_QUERY_URLS = {
     Chain.BASE: "https://gateway.thegraph.com/api/subgraphs/id/46pQKDXgcredBSK9cbGU8qEaPEpEZgQ72hSAkpWnKinJ",

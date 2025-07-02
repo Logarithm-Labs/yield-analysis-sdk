@@ -2,9 +2,11 @@
 Tests for the ACP module.
 """
 
-import pytest
 from unittest.mock import Mock
+
+import pytest
 from virtuals_acp import ACPJobPhase, ACPMemo
+
 from yield_analysis_sdk.acp import (
     extract_analysis_request,
     extract_analysis_response,
@@ -14,9 +16,9 @@ from yield_analysis_sdk.acp import (
 from yield_analysis_sdk.type import (
     AnalysisRequest,
     AnalysisResponse,
+    Chain,
     VaultRegistrationRequest,
     VaultRegistrationResponse,
-    Chain,
 )
 
 

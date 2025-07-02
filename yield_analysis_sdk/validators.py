@@ -3,8 +3,10 @@ Common validators and mixins for the yield analysis SDK.
 """
 
 import re
-from typing import Any, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
+
 from pydantic import field_validator
+
 from .exceptions import ValidationError
 
 if TYPE_CHECKING:

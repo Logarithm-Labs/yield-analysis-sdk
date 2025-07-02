@@ -5,8 +5,9 @@ Tests for the analysis module.
 import pytest
 
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
-from yield_analysis_sdk.type import PerformanceAnalysis, SharePriceHistory
 from yield_analysis_sdk.exceptions import DataError
+from yield_analysis_sdk.type import PerformanceAnalysis, SharePriceHistory
+
 
 class TestAnalysis:
     """Test cases for yield analysis functionality."""

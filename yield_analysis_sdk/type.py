@@ -1,12 +1,12 @@
 from enum import Enum
-from typing import List, Tuple, Any, Optional
+from typing import Any, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
 from .validators import (
     ChainValidatorMixin,
-    VaultAddressValidatorMixin,
     UnderlyingTokenValidatorMixin,
+    VaultAddressValidatorMixin,
 )
 
 

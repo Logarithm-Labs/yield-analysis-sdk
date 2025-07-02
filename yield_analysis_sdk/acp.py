@@ -1,5 +1,7 @@
 from typing import Optional
-from virtuals_acp import VirtualsACP, ACPJob, ACPJobPhase, ACPMemo  # type: ignore
+
+from virtuals_acp import ACPJob, ACPJobPhase, ACPMemo, VirtualsACP  # type: ignore
+
 from .type import (
     AnalysisRequest,
     AnalysisResponse,

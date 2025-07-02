@@ -1,8 +1,9 @@
 import math
 from typing import List, Tuple
 
-from .type import PerformanceAnalysis, SharePriceHistory
 from .exceptions import DataError
+from .type import PerformanceAnalysis, SharePriceHistory
+
 
 def analyze_yield_with_daily_share_price(
     share_price_history: SharePriceHistory, risk_free_rate: float = 0.05
