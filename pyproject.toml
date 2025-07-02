@@ -16,7 +16,6 @@ authors = [
 dependencies = [
     "requests>=2.25.0",
     "pydantic>=2.0.0",
-    "virtuals-acp>=0.1.15",
 ]
 
 [project.urls]
@@ -93,5 +92,6 @@ dev = [
     "isort>=6.0.1",
     "mypy>=1.16.1",
     "pytest>=8.4.1",
-    "pytest-cov>=6.2.1"
+    "pytest-cov>=6.2.1",
+    "virtuals-acp>=0.1.15",
 ]

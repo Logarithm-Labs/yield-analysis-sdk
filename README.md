@@ -6,7 +6,7 @@ A Python SDK for DeFi vault registration and yield analysis services within the 
 
 - **ACP Integration**: Built-in support for Virtuals ACP (Agent Commerce Protocol)
 - **Vault Registration**: Complete workflow for registering DeFi vaults in the ACP ecosystem
-- **Yield Analysis Service**: AI-powered vault performance analysis and metrics calculation
+- **Yield Analysis Service**: Vault performance analysis and metrics calculation
 - **Multi-chain Support**: Ethereum, Arbitrum, Base, Optimism, Polygon, BSC, and more
 - **Comprehensive Metrics**: APY calculations, volatility analysis, Sharpe ratios, and drawdown tracking
 - **Real-time Data**: Fetch vault performance from blockchain subgraphs
@@ -51,7 +51,7 @@ This SDK provides two main services within the ACP ecosystem:
 
 - **APY Calculations**: 7-day, 30-day, 90-day annualized yields
 - **Risk Metrics**: Volatility, maximum drawdown, Sharpe ratio
-- **Vault Info**: Fees, capacity limits, audit status
+- **Vault Info**: Fees, capacity limits
 - **Multi-chain**: Cross-chain vault comparison
 
 

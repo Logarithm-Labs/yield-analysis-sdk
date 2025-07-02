@@ -8,10 +8,6 @@ __version__ = "0.1.1"
 __author__ = "Logarithm Labs"
 __email__ = "dev@logarithm.fi"
 
-from .acp import (
-    extract_analysis_request,
-    extract_vault_registration_request,
-)
 from .analysis import analyze_yield_with_daily_share_price
 from .exceptions import (
     ConfigurationError,
@@ -54,8 +50,6 @@ __all__ = [
     # Main functions
     "get_daily_share_price_history_from_subgraph",
     "analyze_yield_with_daily_share_price",
-    "extract_analysis_request",
-    "extract_vault_registration_request",
     "normalize_address",
     # Exceptions
     "YieldAnalysisError",

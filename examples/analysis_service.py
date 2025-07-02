@@ -12,7 +12,6 @@ load_dotenv(override=True)
 from virtuals_acp.env import EnvSettings
 
 from yield_analysis_sdk import (
-    extract_analysis_request,
     normalize_address,
 )
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
@@ -52,25 +51,29 @@ def seller():
             # Check if there's a memo that indicates next phase is NEGOTIATION
             for memo in job.memos:
                 if memo.next_phase == ACPJobPhase.NEGOTIATION:
-                    job.respond(True)
-                    break
+                    try:
+                        AnalysisRequest.model_validate_json(memo.content)
+                        job.respond(True)
+                    except ValidationError as e:
+                        job.respond(False, "Invalid request format")
+                    finally:
+                        break
         elif job.phase == ACPJobPhase.TRANSACTION:
-            # Check if there's a memo that indicates next phase is EVALUATION
-            analysis_request = extract_analysis_request(job.memos)
-
-            if analysis_request is None:
-                return
-
-            if analysis_request.chain != Chain.BASE:
-                return
-
-            if analysis_request.underlying_token != normalize_address(
-                USDC_TOKEN_ADDRESS[analysis_request.chain]
-            ):
-                return
 
             for memo in job.memos:
                 if memo.next_phase == ACPJobPhase.EVALUATION:
+                    # Check if there's a memo that indicates next phase is EVALUATION
+                    analysis_request = AnalysisRequest.model_validate_json(
+                        job.service_requirement
+                    )
+
+                    if analysis_request.chain != Chain.BASE:
+                        return
+
+                    if analysis_request.underlying_token != normalize_address(
+                        USDC_TOKEN_ADDRESS[analysis_request.chain]
+                    ):
+                        return
 
                     # fetch price history
                     price_histories = get_daily_share_price_history_from_subgraph(
