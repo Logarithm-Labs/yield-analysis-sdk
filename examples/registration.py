@@ -7,16 +7,11 @@ from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
 from virtuals_acp.models import ACPAgentSort, ACPJobPhase
 
-from yield_analysis_sdk import (
-    Chain,
-    VaultRegistrationRequest,
-    VaultRegistrationResponse,
-    extract_vault_registration_response,
-)
+from yield_analysis_sdk import Chain, VaultRegistrationRequest
 
 load_dotenv(override=True)
 
-VAULT_USDC_MORPHO_SPARK = "0x7BfA7C4f149E7415b73bdeDfe609237e29CBF34A"
+VAULT_USDC_MORPHO_SPARK = "0x236919F11ff9eA9550A4287696C2FC9e18E6e890"
 
 
 def buyer():

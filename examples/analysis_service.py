@@ -1,3 +1,5 @@
+import datetime
+import json
 import threading
 from typing import Any, Dict, Optional
 
@@ -11,9 +13,6 @@ from virtuals_acp.env import EnvSettings
 
 from yield_analysis_sdk import (
     extract_analysis_request,
-    extract_analysis_response,
-    extract_vault_registration_request,
-    extract_vault_registration_response,
     normalize_address,
 )
 from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
@@ -23,6 +22,8 @@ from yield_analysis_sdk.type import (
     AnalysisResponse,
     Chain,
     SharePriceHistory,
+    VaultInfo,
+    VaultPerformanceAnalysis,
 )
 
 
@@ -36,8 +37,8 @@ USDC_TOKEN_ADDRESS = {
 
 USDC_VAULT_ADDRESSES = {
     Chain.BASE: [
-        "0x1234567890abcdef1234567890abcdef12345678",
-        "0xabcdef1234567890abcdef1234567890abcdef12",
+        "0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca",
+        "0x616a4E1db48e22028f6bbf20444Cd3b8e3273738",
     ]
 }
 
@@ -70,8 +71,9 @@ def seller():
 
             for memo in job.memos:
                 if memo.next_phase == ACPJobPhase.EVALUATION:
+
                     # fetch price history
-                    price_history = get_daily_share_price_history_from_subgraph(
+                    price_histories = get_daily_share_price_history_from_subgraph(
                         analysis_request.chain,
                         USDC_VAULT_ADDRESSES[analysis_request.chain],
                         90,
@@ -79,14 +81,27 @@ def seller():
                     )
 
                     # analyze yield
-                    analysis_response = analyze_yield_with_daily_share_price(
-                        price_history,
-                        analysis_request.chain,
-                    )
+                    result: AnalysisResponse = AnalysisResponse(analyses=[])
+                    for price_history in price_histories:
+                        result.analyses.append(
+                            VaultPerformanceAnalysis(
+                                vault_info=VaultInfo(
+                                    chain=analysis_request.chain,
+                                    vault_address=price_history.vault_address,
+                                    vault_name=price_history.vault_name,
+                                    last_updated=datetime.now(),
+                                ),
+                                performance=analyze_yield_with_daily_share_price(
+                                    price_history,
+                                ),
+                            )
+                        )
+
+                    print(f"Delivering analysis result: {result.model_dump_json()}")
+                    delivery_data = {"type": "object", "value": result}
 
                     # deliver job
-                    print(analysis_response)
-                    job.deliver(analysis_response.model_dump_json())
+                    job.deliver(json.dumps(delivery_data))
                     break
 
     if env.WHITELISTED_WALLET_PRIVATE_KEY is None:

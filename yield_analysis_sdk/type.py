@@ -75,6 +75,7 @@ class VaultRegistrationResponse(BaseModel):
     message: str
     contract_tx_hash: Optional[str] = None
 
+
 class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
     chain: Chain = Field(..., description="The chain of vaults to analyze")
     underlying_token: str = Field(
@@ -89,12 +90,12 @@ class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
     vault_name: str
 
     # Fee Structure (Critical for allocation decisions)
-    entry_fee_bps: float = Field(0.0, description="Entry fee rate in basis points")
-    exit_fee_bps: float = Field(0.0, description="Exit fee rate in basis points")
+    entry_fee_bps: int = Field(0, description="Entry fee rate in basis points")
+    exit_fee_bps: int = Field(0, description="Exit fee rate in basis points")
 
     # Vault Capacity
     max_deposit_amount: float = Field(
-        ...,
+        0.0,
         description="Maximum amount of underlying token that can be deposited into the vault",
     )
 
