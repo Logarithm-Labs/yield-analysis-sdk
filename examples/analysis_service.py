@@ -101,7 +101,7 @@ def seller():
                         )
 
                     print(f"Delivering analysis result: {result.model_dump_json()}")
-                    delivery_data = {"type": "object", "value": result}
+                    delivery_data = {"type": "object", "value": result.model_dump()}
 
                     # deliver job
                     job.deliver(json.dumps(delivery_data))
@@ -113,7 +113,7 @@ def seller():
         raise ValueError("SELLER_ENTITY_ID is not set")
 
     # Initialize the ACP client
-    acp_client = VirtualsACP(
+    VirtualsACP(
         wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
         agent_wallet_address=env.SELLER_AGENT_WALLET_ADDRESS,
         on_new_task=on_new_task,
