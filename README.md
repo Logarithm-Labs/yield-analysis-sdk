@@ -15,7 +15,7 @@ A Python SDK for DeFi vault registration and yield analysis services within the 
 ## 📦 Installation
 
 ```bash
-pip install git+ssh://git@github.com/Logarithm-Labs/yield-analysis-sdk.git#egg=yield_analysis_sdk
+pip install yield_analysis_sdk
 ```
 
 ## 🔧 Quick Start
