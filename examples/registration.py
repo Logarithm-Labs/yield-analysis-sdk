@@ -1,4 +1,4 @@
-import threading
+import time
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
@@ -12,57 +12,43 @@ from yield_analysis_sdk import Chain, VaultRegistrationRequest
 load_dotenv(override=True)
 
 VAULT_USDC_MORPHO_SPARK = "0x236919F11ff9eA9550A4287696C2FC9e18E6e890"
+BIOS_AGENT_ADDRESS = "0xA908B2A981ae1106e5B047ef44604CCaA1E1c7F9"
+
+# --- Configuration for the job polling interval ---
+POLL_INTERVAL_SECONDS = 20
+
+
+# --------------------------------------------------
 
 
 def buyer():
     env = EnvSettings()
-
-    def on_new_task(job: ACPJob):
-        if job.phase == ACPJobPhase.NEGOTIATION:
-            # Check if there's a memo that indicates next phase is TRANSACTION
-            for memo in job.memos:
-                if memo.next_phase == ACPJobPhase.TRANSACTION:
-                    print("Paying job", job.id)
-                    job.pay(job.price)
-                    break
-        elif job.phase == ACPJobPhase.COMPLETED:
-            print("Job completed", job.deliverable)
-        elif job.phase == ACPJobPhase.REJECTED:
-            print("Job rejected", job)
-
-    def on_evaluate(job: ACPJob):
-        print("Evaluation function called", job.memos)
-        # Find the deliverable memo
-        for memo in job.memos:
-            if memo.next_phase == ACPJobPhase.COMPLETED:
-                # Evaluate the deliverable by accepting it
-                job.evaluate(True)
-                break
-
-    if env.WHITELISTED_WALLET_PRIVATE_KEY is None:
-        raise ValueError("WHITELISTED_WALLET_PRIVATE_KEY is not set")
-    if env.BUYER_AGENT_WALLET_ADDRESS is None:
-        raise ValueError("BUYER_AGENT_WALLET_ADDRESS is not set")
-    if env.BUYER_ENTITY_ID is None:
-        raise ValueError("BUYER_ENTITY_ID is not set")
-
     acp = VirtualsACP(
         wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
         agent_wallet_address=env.BUYER_AGENT_WALLET_ADDRESS,
-        on_new_task=on_new_task,
-        on_evaluate=on_evaluate,
         entity_id=env.BUYER_ENTITY_ID,
     )
+    print(f"Buyer ACP Initialized. Agent: {acp.agent_address}")
 
-    # Browse available agents based on a keyword and cluster name
-    relevant_agents = acp.browse_agents(keyword="bios")
-    print(f"Relevant agents: {relevant_agents}")
+    # # Browse available agents based on a keyword and cluster name
+    # relevant_agents = acp.browse_agents(
+    #     keyword="<your_filter_agent_keyword>",
+    #     cluster="<your_cluster_name>",
+    #     graduated=False,
+    # )
+    # print(f"Relevant agents: {relevant_agents}")
 
-    # Pick one of the agents based on your criteria (in this example we just pick the first one)
-    chosen_agent = relevant_agents[0]
+    # # Pick one of the agents based on your criteria (in this example we just pick the first one)
+    # chosen_agent = relevant_agents[0]
 
-    # Pick the registration service offering
+    chosen_agent = acp.get_agent(wallet_address=BIOS_AGENT_ADDRESS)
+
+    # Pick one of the service offerings based on your criteria (in this example we just pick the first one)
     chosen_job_offering = chosen_agent.offerings[0]
+
+    # 1. Initiate Job
+    print(
+        f"\nInitiating job with Seller: {chosen_agent.wallet_address}, Evaluator: {env.EVALUATOR_AGENT_WALLET_ADDRESS}")
 
     job_id = chosen_job_offering.initiate_job(
         # <your_schema_field> can be found in your ACP Visualiser's "Edit Service" pop-up.
@@ -75,9 +61,37 @@ def buyer():
     )
 
     print(f"Job {job_id} initiated")
-    print("Listening for next steps...")
-    # Keep the script running to listen for next steps
-    threading.Event().wait()
+    # 2. Wait for Seller's acceptance memo (which sets next_phase to TRANSACTION)
+    print(f"\nWaiting for Seller to accept job {job_id}...")
+
+    while True:
+        # wait for some time before checking job again
+        time.sleep(POLL_INTERVAL_SECONDS)
+        job: ACPJob = acp.get_job_by_onchain_id(job_id)
+        print(f"Polling Job {job_id}: Current Phase: {job.phase.name}")
+
+        if job.phase == ACPJobPhase.NEGOTIATION:
+            # Check if there's a memo that indicates next phase is TRANSACTION
+            for memo in job.memos:
+                if memo.next_phase == ACPJobPhase.TRANSACTION:
+                    print("Paying job", job_id)
+                    job.pay(job.price)
+        elif job.phase == ACPJobPhase.REQUEST:
+            print(f"Job {job_id} still in REQUEST phase. Waiting for seller...")
+        elif job.phase == ACPJobPhase.EVALUATION:
+            print(f"Job {job_id} is in EVALUATION.")
+            job.evaluate(True)
+            print(f"Job {job_id} evaluated")
+        elif job.phase == ACPJobPhase.TRANSACTION:
+            print(f"Job {job_id} is in TRANSACTION. Waiting for seller to deliver...")
+        elif job.phase == ACPJobPhase.COMPLETED:
+            print("Job completed", job)
+            break
+        elif job.phase == ACPJobPhase.REJECTED:
+            print("Job rejected", job)
+            break
+
+    print("\n--- Buyer Script Finished ---")
 
 
 if __name__ == "__main__":
