@@ -1,4 +1,4 @@
-import datetime
+import time
 import json
 import threading
 from typing import Any, Dict, Optional
@@ -14,9 +14,9 @@ from virtuals_acp.env import EnvSettings
 from yield_analysis_sdk import (
     normalize_address,
 )
-from yield_analysis_sdk.analysis import analyze_yield_with_daily_share_price
-from yield_analysis_sdk.subgraph import get_daily_share_price_history_from_subgraph
-from yield_analysis_sdk.type import (
+from yield_analysis_sdk import analyze_yield_with_daily_share_price
+from yield_analysis_sdk import get_daily_share_price_history_from_subgraph
+from yield_analysis_sdk import (
     AnalysisRequest,
     AnalysisResponse,
     Chain,
@@ -92,8 +92,8 @@ def seller():
                                     chain=analysis_request.chain,
                                     vault_address=price_history.vault_address,
                                     vault_name=price_history.vault_name,
-                                    protocol="Test",
-                                    last_updated_timestamp=datetime.now(),
+                                    protocol="Morpho Meta Vault",
+                                    last_updated_timestamp=int(time.time()),
                                 ),
                                 performance=analyze_yield_with_daily_share_price(
                                     price_history,
@@ -102,7 +102,7 @@ def seller():
                         )
 
                     print(f"Delivering analysis result: {result.model_dump_json()}")
-                    delivery_data = {"type": "object", "value": result.model_dump()}
+                    delivery_data = {"type": "text", "value": result.model_dump_json()}
 
                     # deliver job
                     job.deliver(json.dumps(delivery_data))
