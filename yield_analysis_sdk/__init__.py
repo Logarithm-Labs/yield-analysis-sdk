@@ -4,7 +4,7 @@ Yield Analysis SDK
 A Python SDK for analyzing DeFi vault performance and yield metrics.
 """
 
-__version__ = "0.1.2"
+__version__ = "0.2.0"
 __author__ = "Logarithm Labs"
 __email__ = "dev@logarithm.fi"
 
@@ -28,9 +28,9 @@ from .type import (
     SharePriceHistory,
     StrategyType,
     VaultInfo,
-    VaultPerformanceAnalysis,
-    VaultRegistrationRequest,
-    VaultRegistrationResponse,
+    AnalysisResult,
+    RegistrationRequest,
+    RegistrationResponse,
 )
 from .validators import normalize_address
 
@@ -42,11 +42,11 @@ __all__ = [
     "AnalysisRequest",
     "VaultInfo",
     "PerformanceAnalysis",
-    "VaultPerformanceAnalysis",
+    "AnalysisResult",
     "AnalysisResponse",
     "SharePriceHistory",
-    "VaultRegistrationRequest",
-    "VaultRegistrationResponse",
+    "RegistrationRequest",
+    "RegistrationResponse",
     # Main functions
     "get_daily_share_price_history_from_subgraph",
     "analyze_yield_with_daily_share_price",
