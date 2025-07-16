@@ -81,6 +81,7 @@ class TestTypes:
             chain=Chain.BASE,
             vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
+            protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
             entry_fee_bps=0.0,
@@ -91,6 +92,7 @@ class TestTypes:
         assert vault_info.chain == Chain.BASE
         assert vault_info.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
         assert vault_info.vault_name == "Test Vault"
+        assert vault_info.protocol == "Test"
         assert vault_info.max_deposit_amount == 1000000.0
         assert vault_info.entry_fee_bps == 0.0  # Default value
         assert vault_info.exit_fee_bps == 0.0  # Default value
@@ -124,6 +126,7 @@ class TestTypes:
             chain=Chain.BASE,
             vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
+            protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
             entry_fee_bps=0.0,
@@ -153,6 +156,7 @@ class TestTypes:
             chain=Chain.BASE,
             vault_address="0x1234567890abcdef1234567890abcdef12345678",
             vault_name="Test Vault",
+            protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
             entry_fee_bps=0.0,
