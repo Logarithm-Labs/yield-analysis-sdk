@@ -63,14 +63,12 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 
-class VaultRegistrationRequest(
-    VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel
-):
+class RegistrationRequest(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
     chain: Chain
     vault_address: str
 
 
-class VaultRegistrationResponse(BaseModel):
+class RegistrationResponse(BaseModel):
     is_registered: bool
     message: str
     contract_tx_hash: Optional[str] = None
@@ -88,6 +86,9 @@ class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
     chain: Chain
     vault_address: str
     vault_name: str
+    protocol: str = Field(
+        ..., description="The protocol/platform this vault belongs to"
+    )
 
     # Fee Structure (Critical for allocation decisions)
     entry_fee_bps: int = Field(0, description="Entry fee rate in basis points")
@@ -132,16 +133,14 @@ class PerformanceAnalysis(BaseModel):
     )
 
 
-class VaultPerformanceAnalysis(BaseModel):
+class AnalysisResult(BaseModel):
     # Combined vault info and performance analysis
     vault_info: VaultInfo
     performance: PerformanceAnalysis
 
 
 class AnalysisResponse(BaseModel):
-    analyses: list[VaultPerformanceAnalysis] = Field(
-        ..., description="List of vault analyses"
-    )
+    analyses: List[AnalysisResult] = Field(..., description="List of vault analyses")
 
 
 class SharePriceHistory(VaultAddressValidatorMixin, BaseModel):

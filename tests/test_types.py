@@ -13,7 +13,7 @@ from yield_analysis_sdk.type import (
     SharePriceHistory,
     StrategyType,
     VaultInfo,
-    VaultPerformanceAnalysis,
+    AnalysisResult,
 )
 
 
@@ -119,7 +119,7 @@ class TestTypes:
         assert performance.analysis_period_days == 90
 
     def test_vault_performance_analysis_creation(self) -> None:
-        """Test VaultPerformanceAnalysis model creation."""
+        """Test AnalysisResult model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
             vault_address="0x1234567890abcdef1234567890abcdef12345678",
@@ -142,9 +142,7 @@ class TestTypes:
             analysis_period_days=90,
         )
 
-        vault_analysis = VaultPerformanceAnalysis(
-            vault_info=vault_info, performance=performance
-        )
+        vault_analysis = AnalysisResult(vault_info=vault_info, performance=performance)
 
         assert vault_analysis.vault_info == vault_info
         assert vault_analysis.performance == performance
@@ -173,9 +171,7 @@ class TestTypes:
             analysis_period_days=90,
         )
 
-        vault_analysis = VaultPerformanceAnalysis(
-            vault_info=vault_info, performance=performance
-        )
+        vault_analysis = AnalysisResult(vault_info=vault_info, performance=performance)
 
         response = AnalysisResponse(analyses=[vault_analysis])
 

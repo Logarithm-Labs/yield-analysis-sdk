@@ -7,7 +7,7 @@ from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
 from virtuals_acp.models import ACPAgentSort, ACPJobPhase
 
-from yield_analysis_sdk import Chain, VaultRegistrationRequest
+from yield_analysis_sdk import Chain, RegistrationRequest
 
 load_dotenv(override=True)
 
@@ -46,14 +46,17 @@ def buyer():
     # Pick one of the service offerings based on your criteria (in this example we just pick the first one)
     chosen_job_offering = chosen_agent.offerings[0]
 
+    print()
+
     # 1. Initiate Job
     print(
-        f"\nInitiating job with Seller: {chosen_agent.wallet_address}, Evaluator: {env.EVALUATOR_AGENT_WALLET_ADDRESS}")
+        f"\nInitiating job with Seller: {chosen_agent.wallet_address}, Evaluator: {env.EVALUATOR_AGENT_WALLET_ADDRESS}"
+    )
 
     job_id = chosen_job_offering.initiate_job(
         # <your_schema_field> can be found in your ACP Visualiser's "Edit Service" pop-up.
         # Reference: (./images/specify_requirement_toggle_switch.png)
-        service_requirement=VaultRegistrationRequest(
+        service_requirement=RegistrationRequest(
             chain=Chain.BASE, vault_address=VAULT_USDC_MORPHO_SPARK
         ).model_dump_json(),
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,

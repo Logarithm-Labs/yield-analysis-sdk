@@ -22,7 +22,7 @@ from yield_analysis_sdk.type import (
     Chain,
     SharePriceHistory,
     VaultInfo,
-    VaultPerformanceAnalysis,
+    AnalysisResult,
 )
 
 
@@ -87,12 +87,13 @@ def seller():
                     result: AnalysisResponse = AnalysisResponse(analyses=[])
                     for price_history in price_histories:
                         result.analyses.append(
-                            VaultPerformanceAnalysis(
+                            AnalysisResult(
                                 vault_info=VaultInfo(
                                     chain=analysis_request.chain,
                                     vault_address=price_history.vault_address,
                                     vault_name=price_history.vault_name,
-                                    last_updated=datetime.now(),
+                                    protocol="Test",
+                                    last_updated_timestamp=datetime.now(),
                                 ),
                                 performance=analyze_yield_with_daily_share_price(
                                     price_history,
