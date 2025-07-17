@@ -124,6 +124,7 @@ def get_daily_share_price_history_from_subgraph(
     Args:
         chain: The blockchain chain to query.
         vault_addresses: A list of vault addresses to query.
+        underlying_asset_decimals: The number of decimals of the underlying asset. e.g. 6 for USDC.
         length: The number of days to query.
         api_key: The API key for the subgraph.
     """
