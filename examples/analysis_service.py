@@ -79,6 +79,7 @@ def seller():
                     price_histories = get_daily_share_price_history_from_subgraph(
                         analysis_request.chain,
                         USDC_VAULT_ADDRESSES[analysis_request.chain],
+                        6,
                         90,
                         env.SUBGRAPH_API_KEY,
                     )

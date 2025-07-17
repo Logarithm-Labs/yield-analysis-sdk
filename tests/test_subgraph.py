@@ -43,6 +43,7 @@ class TestSubgraph:
                         "vault": {
                             "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
+                            "decimals": "12",
                         },
                     },
                     {
@@ -51,13 +52,14 @@ class TestSubgraph:
                         "vault": {
                             "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
+                            "decimals": "12",
                         },
                     },
                 ]
             }
         }
 
-        result = _format_price_history_response(mock_response)
+        result = _format_price_history_response(mock_response, 6)
 
         assert len(result) == 1
         assert isinstance(result[0], SharePriceHistory)
@@ -69,7 +71,7 @@ class TestSubgraph:
         """Test formatting response with no data."""
         mock_response = {"data": {"vaultStats_collection": []}}
 
-        result = _format_price_history_response(mock_response)
+        result = _format_price_history_response(mock_response, 6)
 
         assert result == []
 
@@ -87,6 +89,7 @@ class TestSubgraph:
                         "vault": {
                             "address": "0x1234567890abcdef1234567890abcdef12345678",
                             "name": "Test Vault",
+                            "decimals": "12",
                         },
                     }
                 ]
@@ -96,7 +99,7 @@ class TestSubgraph:
 
         vault_addresses = ["0x1234567890abcdef1234567890abcdef12345678"]
         result = get_daily_share_price_history_from_subgraph(
-            Chain.BASE, vault_addresses, 7, "test_api_key"
+            Chain.BASE, vault_addresses, 6, 7, "test_api_key"
         )
 
         assert len(result) == 1

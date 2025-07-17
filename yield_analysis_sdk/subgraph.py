@@ -28,6 +28,7 @@ query DailyPriceHistory($vault_addresses: [Bytes!], $length: Int!) {
     vault {
       address
       name
+      decimals
     }
   }
 }
@@ -64,7 +65,9 @@ def _send_graphql_query_to_subgraph(
     return result
 
 
-def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
+def _format_price_history_response(
+    res: dict, underlying_asset_decimals: int
+) -> List[SharePriceHistory]:
     if not res or "data" not in res or not res["data"]["vaultStats_collection"]:
         return []
 
@@ -73,10 +76,12 @@ def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
     for entry in res["data"]["vaultStats_collection"]:
         vault_address = entry["vault"]["address"]
         vault_name = entry["vault"]["name"]
+        vault_decimals = int(entry["vault"]["decimals"])
         timestamp = (
             int(entry["timestamp"]) // 1000000
         )  # Convert microseconds to seconds
-        price_per_share = float(entry["pricePerShare"])
+        decimals_multiplier: float = 10 ** (vault_decimals - underlying_asset_decimals)
+        price_per_share = float(entry["pricePerShare"]) * decimals_multiplier
 
         if vault_address not in history_by_vault:
             history_by_vault[vault_address] = {
@@ -107,7 +112,11 @@ def _format_price_history_response(res: dict) -> List[SharePriceHistory]:
 
 
 def get_daily_share_price_history_from_subgraph(
-    chain: Chain, vault_addresses: List[str], length: int, api_key: str
+    chain: Chain,
+    vault_addresses: List[str],
+    underlying_asset_decimals: int,
+    length: int,
+    api_key: str,
 ) -> List[SharePriceHistory]:
     """
     Get the daily share price history from the subgraph for a list of vault addresses.
@@ -131,4 +140,4 @@ def get_daily_share_price_history_from_subgraph(
     res: dict = _send_graphql_query_to_subgraph(
         chain, daily_share_price_query, variables, api_key
     )
-    return _format_price_history_response(res)
+    return _format_price_history_response(res, underlying_asset_decimals)
