@@ -96,8 +96,8 @@ class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
 
     # Vault Capacity
     max_deposit_amount: float = Field(
-        0.0,
-        description="Maximum amount of underlying token that can be deposited into the vault",
+        1_000_000_000_000.00,
+        description="Maximum amount of underlying token that can be deposited into the vault.",
     )
 
     # Analysis Context
