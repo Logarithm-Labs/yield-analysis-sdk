@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "yield-analysis-sdk"
-version = "0.2.1"
+version = "0.2.2"
 description = "A Python SDK for analyzing DeFi vault performance and yield metrics"
 readme = "README.md"
 license = {text = "MIT"}
