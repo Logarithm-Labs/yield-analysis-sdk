@@ -41,6 +41,16 @@ USDC_VAULT_ADDRESSES = {
     ]
 }
 
+ID_TO_CHAIN = {
+    1: Chain.ETHEREUM,
+    8453: Chain.BASE,
+    42161: Chain.ARBITRUM,
+    10: Chain.OPTIMISM,
+    137: Chain.POLYGON,
+    56: Chain.BSC,
+    33139: Chain.GNOS,
+}
+
 
 def seller():
     env = CustomEnvSettings()
@@ -67,18 +77,11 @@ def seller():
                         job.service_requirement
                     )
 
-                    if analysis_request.chain != Chain.BASE:
-                        return
-
-                    if analysis_request.underlying_token != normalize_address(
-                        USDC_TOKEN_ADDRESS[analysis_request.chain]
-                    ):
-                        return
-
+                    # for test purpose, only support strategies with same chainId
                     # fetch price history
                     price_histories = get_daily_share_price_history_from_subgraph(
-                        analysis_request.chain,
-                        USDC_VAULT_ADDRESSES[analysis_request.chain],
+                        ID_TO_CHAIN[analysis_request.strategies[0].chainId],
+                        [strategy.address.lower() for strategy in analysis_request.strategies],
                         6,
                         90,
                         env.SUBGRAPH_API_KEY,

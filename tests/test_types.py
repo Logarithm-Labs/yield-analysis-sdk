@@ -6,6 +6,7 @@ import pytest
 
 from yield_analysis_sdk.type import (
     AnalysisRequest,
+    Strategy,
     AnalysisResponse,
     AuditStatus,
     Chain,
@@ -52,28 +53,18 @@ class TestTypes:
     def test_analysis_request_creation(self) -> None:
         """Test AnalysisRequest model creation."""
         request = AnalysisRequest(
-            chain=Chain.BASE,
-            underlying_token="0xabcdef1234567890abcdef1234567890abcdef12",
+            strategies=[
+                Strategy(
+                    chainId=1, address="0xabcdef1234567890abcdef1234567890abcdef12"
+                ),
+            ]
         )
 
-        assert request.chain == Chain.BASE
-        assert request.underlying_token == "0xabcdef1234567890abcdef1234567890abcdef12"
-
-    def test_analysis_request_with_unknown_chain(self) -> None:
-        """Test AnalysisRequest with unknown chain value."""
-        # Test with unknown chain string
-        request = AnalysisRequest(
-            chain="unknown_chain",
-            underlying_token="0xabcdef1234567890abcdef1234567890abcdef12",
+        assert request.strategies[0].chainId == 1
+        assert (
+            request.strategies[0].address
+            == "0xabcdef1234567890abcdef1234567890abcdef12"
         )
-        assert request.chain == Chain.OTHER
-
-        # Test with invalid chain string
-        request2 = AnalysisRequest(
-            chain="invalid_chain_name",
-            underlying_token="0xabcdef1234567890abcdef1234567890abcdef12",
-        )
-        assert request2.chain == Chain.OTHER
 
     def test_vault_info_creation(self) -> None:
         """Test VaultInfo model creation."""

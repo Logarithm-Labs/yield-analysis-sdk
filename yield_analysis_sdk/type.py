@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
@@ -74,11 +74,13 @@ class RegistrationResponse(BaseModel):
     contract_tx_hash: Optional[str] = None
 
 
-class AnalysisRequest(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
-    chain: Chain = Field(..., description="The chain of vaults to analyze")
-    underlying_token: str = Field(
-        ..., description="The underlying token of vaults to analyze"
-    )
+class Strategy(BaseModel):
+    chainId: int
+    address: str
+
+
+class AnalysisRequest(BaseModel):
+    strategies: List[Strategy]
 
 
 class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
@@ -137,6 +139,9 @@ class AnalysisResult(BaseModel):
     # Combined vault info and performance analysis
     vault_info: VaultInfo
     performance: PerformanceAnalysis
+    extra_info: Optional[Dict[str, Any]] = Field(
+        default=None, description="Additional information about the vault"
+    )
 
 
 class AnalysisResponse(BaseModel):
