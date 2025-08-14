@@ -8,6 +8,7 @@ from .validators import validate_address_value
 
 SUBGRAPH_QUERY_URLS = {
     Chain.BASE: "https://gateway.thegraph.com/api/subgraphs/id/46pQKDXgcredBSK9cbGU8qEaPEpEZgQ72hSAkpWnKinJ",
+    Chain.ARBITRUM: "https://gateway.thegraph.com/api/subgraphs/id/AH842SqnNHmMM54fY6eX9sGSV4BPo8fmeoj5C3qbNsr1",
 }
 
 daily_share_price_query = """

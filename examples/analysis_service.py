@@ -81,7 +81,10 @@ def seller():
                     # fetch price history
                     price_histories = get_daily_share_price_history_from_subgraph(
                         ID_TO_CHAIN[analysis_request.strategies[0].chainId],
-                        [strategy.address.lower() for strategy in analysis_request.strategies],
+                        [
+                            strategy.address.lower()
+                            for strategy in analysis_request.strategies
+                        ],
                         6,
                         90,
                         env.SUBGRAPH_API_KEY,
