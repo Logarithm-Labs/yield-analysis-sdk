@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from pydantic import BaseModel, Field
 
 from .validators import (
-    ChainValidatorMixin,
+    ChainMixin,
     UnderlyingTokenValidatorMixin,
     VaultAddressValidatorMixin,
 )
@@ -63,7 +63,7 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 
-class RegistrationRequest(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
+class RegistrationRequest(VaultAddressValidatorMixin, ChainMixin, BaseModel):
     chain: Chain
     vault_address: str
 
@@ -83,7 +83,7 @@ class AnalysisRequest(BaseModel):
     strategies: List[Strategy]
 
 
-class VaultInfo(VaultAddressValidatorMixin, ChainValidatorMixin, BaseModel):
+class VaultInfo(VaultAddressValidatorMixin, ChainMixin, BaseModel):
     # Basic Vault Information
     chain: Chain
     vault_address: str

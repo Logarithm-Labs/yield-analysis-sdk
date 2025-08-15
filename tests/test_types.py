@@ -80,7 +80,7 @@ class TestTypes:
             risk_free_rate=0.05,
         )
 
-        assert vault_info.chain == Chain.BASE
+        assert vault_info.chain == Chain.BASE.value
         assert vault_info.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
         assert vault_info.vault_name == "Test Vault"
         assert vault_info.protocol == "Test"

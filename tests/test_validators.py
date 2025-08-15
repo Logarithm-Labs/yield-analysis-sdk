@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from yield_analysis_sdk.exceptions import ValidationError
 from yield_analysis_sdk.type import Chain
 from yield_analysis_sdk.validators import (
-    ChainValidatorMixin,
+    ChainMixin,
     UnderlyingTokenValidatorMixin,
     VaultAddressValidatorMixin,
     normalize_address,
@@ -37,22 +37,22 @@ class TestValidators:
         assert validate_chain_value(Chain.BASE) == Chain.BASE
 
     def test_chain_validator_mixin(self) -> None:
-        """Test the ChainValidatorMixin."""
+        """Test the ChainMixin."""
 
-        class TestModel(ChainValidatorMixin, BaseModel):
+        class TestModel(ChainMixin, BaseModel):
             chain: Chain
 
         # Test with string
         model = TestModel(chain="ethereum")
-        assert model.chain == Chain.ETHEREUM
+        assert model.chain == Chain.ETHEREUM.value
 
         # Test with invalid string
         model = TestModel(chain="invalid")
-        assert model.chain == Chain.OTHER
+        assert model.chain == Chain.OTHER.value
 
         # Test with enum
         model = TestModel(chain=Chain.BASE)
-        assert model.chain == Chain.BASE
+        assert model.chain == Chain.BASE.value
 
     def test_normalize_address_valid(self) -> None:
         """Test normalizing valid addresses."""
@@ -155,7 +155,7 @@ class TestValidators:
     def test_combined_validators(self) -> None:
         """Test combining multiple validators."""
 
-        class TestModel(UnderlyingTokenValidatorMixin, ChainValidatorMixin, BaseModel):
+        class TestModel(UnderlyingTokenValidatorMixin, ChainMixin, BaseModel):
             chain: Chain
             underlying_token: str
 
@@ -164,7 +164,7 @@ class TestValidators:
             chain="ethereum",
             underlying_token="0x1234567890abcdef1234567890abcdef12345678",
         )
-        assert model.chain == Chain.ETHEREUM
+        assert model.chain == Chain.ETHEREUM.value
         assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test with invalid chain and valid address
@@ -172,5 +172,5 @@ class TestValidators:
             chain="invalid_chain",
             underlying_token="0x1234567890abcdef1234567890abcdef12345678",
         )
-        assert model.chain == Chain.OTHER
+        assert model.chain == Chain.OTHER.value
         assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
