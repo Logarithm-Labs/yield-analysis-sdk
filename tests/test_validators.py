@@ -172,5 +172,5 @@ class TestValidators:
             chain="invalid_chain",
             underlying_token="0x1234567890abcdef1234567890abcdef12345678",
         )
-        assert model.chain == Chain.OTHER.value
+        assert model.chain == Chain.OTHER
         assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"

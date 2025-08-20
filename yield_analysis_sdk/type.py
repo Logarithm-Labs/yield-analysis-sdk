@@ -30,6 +30,18 @@ class Chain(Enum):
         """Handle unknown chain values by returning OTHER."""
         return cls.OTHER
 
+    def __eq__(self, other: Any) -> bool:
+        """Allow comparison between string values and enum objects."""
+        if isinstance(other, Chain):
+            return super().__eq__(other)
+        elif isinstance(other, str):
+            return self.value == other
+        return False
+
+    def __hash__(self) -> int:
+        """Maintain hash consistency with enum behavior."""
+        return super().__hash__()
+
 
 class StrategyType(Enum):
     # Core Yield Strategies
