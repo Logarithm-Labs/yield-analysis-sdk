@@ -5,7 +5,7 @@ Common validators and mixins for the yield analysis SDK.
 import re
 from typing import TYPE_CHECKING, Any, Union
 
-from pydantic import ConfigDict, field_validator, field_serializer
+from pydantic import ConfigDict, field_serializer, field_validator
 
 from .exceptions import ValidationError
 

@@ -1,6 +1,6 @@
-import time
 import json
 import threading
+import time
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
@@ -12,17 +12,15 @@ load_dotenv(override=True)
 from virtuals_acp.env import EnvSettings
 
 from yield_analysis_sdk import (
-    normalize_address,
-)
-from yield_analysis_sdk import analyze_yield_with_daily_share_price
-from yield_analysis_sdk import get_daily_share_price_history_from_subgraph
-from yield_analysis_sdk import (
     AnalysisRequest,
     AnalysisResponse,
+    AnalysisResult,
     Chain,
     SharePriceHistory,
     VaultInfo,
-    AnalysisResult,
+    analyze_yield_with_daily_share_price,
+    get_daily_share_price_history_from_subgraph,
+    normalize_address,
 )
 
 

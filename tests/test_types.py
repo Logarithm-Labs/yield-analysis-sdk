@@ -2,21 +2,23 @@
 Tests for the type module.
 """
 
-import pytest
 import json
+
+import pytest
+
 from yield_analysis_sdk.type import (
     AnalysisRequest,
-    Strategy,
     AnalysisResponse,
+    AnalysisResult,
     AuditStatus,
     Chain,
     PerformanceAnalysis,
-    SharePriceHistory,
-    StrategyType,
-    VaultInfo,
-    AnalysisResult,
     RegistrationRequest,
     RegistrationResponse,
+    SharePriceHistory,
+    Strategy,
+    StrategyType,
+    VaultInfo,
 )
 
 

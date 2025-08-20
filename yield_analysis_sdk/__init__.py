@@ -22,16 +22,16 @@ from .subgraph import get_daily_share_price_history_from_subgraph
 from .type import (
     AnalysisRequest,
     AnalysisResponse,
+    AnalysisResult,
     AuditStatus,
     Chain,
     PerformanceAnalysis,
+    RegistrationRequest,
+    RegistrationResponse,
     SharePriceHistory,
     Strategy,
     StrategyType,
     VaultInfo,
-    AnalysisResult,
-    RegistrationRequest,
-    RegistrationResponse,
 )
 from .validators import normalize_address
 
