@@ -79,8 +79,8 @@ class TestTypes:
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
-            entry_fee_bps=0.0,
-            exit_fee_bps=0.0,
+            entry_cost_bps=0.0,
+            exit_cost_bps=0.0,
             risk_free_rate=0.05,
         )
 
@@ -89,8 +89,8 @@ class TestTypes:
         assert vault_info.vault_name == "Test Vault"
         assert vault_info.protocol == "Test"
         assert vault_info.max_deposit_amount == 1000000.0
-        assert vault_info.entry_fee_bps == 0.0  # Default value
-        assert vault_info.exit_fee_bps == 0.0  # Default value
+        assert vault_info.entry_cost_bps == 0.0  # Default value
+        assert vault_info.exit_cost_bps == 0.0  # Default value
         assert vault_info.risk_free_rate == 0.05  # Default value
 
     def test_vault_info_serialization(self) -> None:
@@ -102,8 +102,8 @@ class TestTypes:
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
-            entry_fee_bps=0.0,
-            exit_fee_bps=0.0,
+            entry_cost_bps=0.0,
+            exit_cost_bps=0.0,
             risk_free_rate=0.05,
         )
         obj = vault_info.model_dump(mode="json")
@@ -145,8 +145,8 @@ class TestTypes:
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
-            entry_fee_bps=0.0,
-            exit_fee_bps=0.0,
+            entry_cost_bps=0.0,
+            exit_cost_bps=0.0,
             risk_free_rate=0.05,
         )
 
@@ -175,8 +175,8 @@ class TestTypes:
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
-            entry_fee_bps=0.0,
-            exit_fee_bps=0.0,
+            entry_cost_bps=0.0,
+            exit_cost_bps=0.0,
             risk_free_rate=0.05,
         )
 
