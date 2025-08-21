@@ -104,9 +104,9 @@ class VaultInfo(VaultAddressValidatorMixin, ChainMixin, BaseModel):
         ..., description="The protocol/platform this vault belongs to"
     )
 
-    # Fee Structure (Critical for allocation decisions)
-    entry_fee_bps: int = Field(0, description="Entry fee rate in basis points")
-    exit_fee_bps: int = Field(0, description="Exit fee rate in basis points")
+    # Cost Structure (Critical for allocation decisions)
+    entry_cost_bps: int = Field(0, description="Entry cost rate in basis points")
+    exit_cost_bps: int = Field(0, description="Exit cost rate in basis points")
 
     # Vault Capacity
     max_deposit_amount: float = Field(
