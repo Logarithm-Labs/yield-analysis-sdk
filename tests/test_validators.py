@@ -8,9 +8,9 @@ from pydantic import BaseModel
 from yield_analysis_sdk.exceptions import ValidationError
 from yield_analysis_sdk.type import Chain
 from yield_analysis_sdk.validators import (
+    AddressValidatorMixin,
     ChainMixin,
     UnderlyingTokenValidatorMixin,
-    AddressValidatorMixin,
     normalize_address,
     validate_address_value,
     validate_chain_value,
