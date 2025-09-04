@@ -7,7 +7,6 @@ from .validators import (
     AddressValidatorMixin,
     ChainMixin,
     UnderlyingTokenValidatorMixin,
-    VaultAddressValidatorMixin,
 )
 
 
@@ -102,11 +101,11 @@ class AnalysisRequest(BaseModel):
     strategies: List[Strategy]
 
 
-class VaultInfo(VaultAddressValidatorMixin, ChainMixin, BaseModel):
+class VaultInfo(AddressValidatorMixin, ChainMixin, BaseModel):
     # Basic Vault Information
     chain: Chain
-    vault_address: str
-    vault_name: str
+    address: str
+    name: str
     protocol: str = Field(
         ..., description="The protocol/platform this vault belongs to"
     )
@@ -167,7 +166,7 @@ class AnalysisResponse(BaseModel):
     analyses: List[AnalysisResult] = Field(..., description="List of vault analyses")
 
 
-class SharePriceHistory(VaultAddressValidatorMixin, BaseModel):
-    vault_name: str
-    vault_address: str
+class SharePriceHistory(AddressValidatorMixin, BaseModel):
+    name: str
+    address: str
     price_history: List[Tuple[int, float]]

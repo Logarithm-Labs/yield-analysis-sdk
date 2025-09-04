@@ -95,8 +95,8 @@ def seller():
                             AnalysisResult(
                                 vault_info=VaultInfo(
                                     chain=analysis_request.chain,
-                                    vault_address=price_history.vault_address,
-                                    vault_name=price_history.vault_name,
+                                    address=price_history.address,
+                                    name=price_history.name,
                                     protocol="Morpho Meta Vault",
                                     last_updated_timestamp=int(time.time()),
                                 ),

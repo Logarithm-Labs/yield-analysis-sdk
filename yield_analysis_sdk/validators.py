@@ -35,21 +35,6 @@ class ChainMixin:
             return Chain.OTHER
 
 
-class VaultAddressValidatorMixin:
-    """Mixin class that provides vault address validation functionality."""
-
-    @field_validator("vault_address", mode="before")
-    @classmethod
-    def validate_vault_address(cls, v: Any) -> str:
-        """Validate vault address format and normalize it."""
-        if isinstance(v, str):
-            return normalize_address(v)
-        elif v is None:
-            raise ValidationError("Vault address cannot be None")
-        else:
-            return str(v)
-
-
 class AddressValidatorMixin:
     """Mixin class that provides address validation functionality."""
 
