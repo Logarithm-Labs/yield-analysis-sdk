@@ -208,9 +208,7 @@ class TestTypes:
         )
 
         assert price_history.name == "Test Vault"
-        assert (
-            price_history.address == "0x1234567890abcdef1234567890abcdef12345678"
-        )
+        assert price_history.address == "0x1234567890abcdef1234567890abcdef12345678"
         assert len(price_history.price_history) == 2
         assert price_history.price_history[0] == (1640995200, 1.05)
 
