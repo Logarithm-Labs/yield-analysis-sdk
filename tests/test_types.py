@@ -12,6 +12,7 @@ from yield_analysis_sdk.type import (
     AnalysisResult,
     AuditStatus,
     Chain,
+    Contract,
     PerformanceAnalysis,
     RegistrationRequest,
     RegistrationResponse,
@@ -216,26 +217,32 @@ class TestTypes:
     def test_registration_request_creation(self) -> None:
         """Test RegistrationRequest model creation."""
         request = RegistrationRequest(
-            chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
+            vault=Contract(
+                chain=Chain.BASE,
+                address="0x1234567890abcdef1234567890abcdef12345678",
+            )
         )
 
-        assert request.chain == Chain.BASE
-        assert request.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        assert request.vault.chain == Chain.BASE
+        assert request.vault.address == "0x1234567890abcdef1234567890abcdef12345678"
 
     def test_registration_request_validation(self) -> None:
         """Test RegistrationRequest model validation."""
         request = {
-            "chain": "base",
-            "vault_address": "0x1234567890abcdef1234567890abcdef12345678",
+            "vault": {
+                "chain": "base",
+                "address": "0x1234567890abcdef1234567890abcdef12345678",
+            }
         }
         RegistrationRequest.model_validate(request)
 
     def test_registration_request_json_validation(self) -> None:
         """Test RegistrationRequest model JSON validation."""
         request = {
-            "chain": "base",
-            "vault_address": "0x1234567890abcdef1234567890abcdef12345678",
+            "vault": {
+                "chain": "base",
+                "address": "0x1234567890abcdef1234567890abcdef12345678",
+            }
         }
         RegistrationRequest.model_validate_json(json.dumps(request))
 
