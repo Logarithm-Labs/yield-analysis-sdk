@@ -1,9 +1,10 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, HttpUrl
 
 from .validators import (
+    AddressValidatorMixin,
     ChainMixin,
     UnderlyingTokenValidatorMixin,
     VaultAddressValidatorMixin,
@@ -75,9 +76,15 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 
-class RegistrationRequest(VaultAddressValidatorMixin, ChainMixin, BaseModel):
+class Contract(AddressValidatorMixin, ChainMixin, BaseModel):
+    address: str
     chain: Chain
-    vault_address: str
+
+
+class RegistrationRequest(BaseModel):
+    vault: Contract
+    contracts: Optional[List[Contract]] = None
+    github_repo_url: Optional[HttpUrl] = None
 
 
 class RegistrationResponse(BaseModel):

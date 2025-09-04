@@ -50,6 +50,21 @@ class VaultAddressValidatorMixin:
             return str(v)
 
 
+class AddressValidatorMixin:
+    """Mixin class that provides address validation functionality."""
+
+    @field_validator("address", mode="before")
+    @classmethod
+    def validate_address(cls, v: Any) -> str:
+        """Validate address format and normalize it."""
+        if isinstance(v, str):
+            return normalize_address(v)
+        elif v is None:
+            raise ValidationError("Address cannot be None")
+        else:
+            return str(v)
+
+
 class UnderlyingTokenValidatorMixin:
     """Mixin class that provides token address validation functionality."""
 
