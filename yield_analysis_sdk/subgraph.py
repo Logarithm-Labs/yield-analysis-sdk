@@ -86,8 +86,8 @@ def _format_price_history_response(
 
         if vault_address not in history_by_vault:
             history_by_vault[vault_address] = {
-                "vault_name": vault_name,
-                "vault_address": vault_address,
+                "name": vault_name,
+                "address": vault_address,
                 "price_history": [],
             }
 
@@ -103,8 +103,8 @@ def _format_price_history_response(
     result = []
     for vault_data in history_by_vault.values():
         share_price_history = SharePriceHistory(
-            vault_name=vault_data["vault_name"],
-            vault_address=vault_data["vault_address"],
+            name=vault_data["name"],
+            address=vault_data["address"],
             price_history=vault_data["price_history"],
         )
         result.append(share_price_history)

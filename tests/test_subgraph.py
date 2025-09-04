@@ -63,8 +63,8 @@ class TestSubgraph:
 
         assert len(result) == 1
         assert isinstance(result[0], SharePriceHistory)
-        assert result[0].vault_name == "Test Vault"
-        assert result[0].vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        assert result[0].name == "Test Vault"
+        assert result[0].address == "0x1234567890abcdef1234567890abcdef12345678"
         assert len(result[0].price_history) == 2
 
     def test_format_price_history_response_no_data(self) -> None:
@@ -104,6 +104,6 @@ class TestSubgraph:
 
         assert len(result) == 1
         assert isinstance(result[0], SharePriceHistory)
-        assert result[0].vault_name == "Test Vault"
-        assert result[0].vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        assert result[0].name == "Test Vault"
+        assert result[0].address == "0x1234567890abcdef1234567890abcdef12345678"
         mock_send_query.assert_called_once()

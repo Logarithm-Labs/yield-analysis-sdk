@@ -8,9 +8,9 @@ from pydantic import BaseModel
 from yield_analysis_sdk.exceptions import ValidationError
 from yield_analysis_sdk.type import Chain
 from yield_analysis_sdk.validators import (
+    AddressValidatorMixin,
     ChainMixin,
     UnderlyingTokenValidatorMixin,
-    VaultAddressValidatorMixin,
     normalize_address,
     validate_address_value,
     validate_chain_value,
@@ -116,23 +116,23 @@ class TestValidators:
         with pytest.raises(ValidationError, match="Invalid address format"):
             validate_address_value("0x1234567890abcdef")
 
-    def test_vault_address_validator_mixin(self) -> None:
-        """Test the VaultAddressValidatorMixin."""
+    def test_address_validator_mixin(self) -> None:
+        """Test the AddressValidatorMixin."""
 
-        class TestModel(VaultAddressValidatorMixin, BaseModel):
-            vault_address: str
+        class TestModel(AddressValidatorMixin, BaseModel):
+            address: str
 
         # Test with valid address
-        model = TestModel(vault_address="0x1234567890abcdef1234567890abcdef12345678")
-        assert model.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        model = TestModel(address="0x1234567890abcdef1234567890abcdef12345678")
+        assert model.address == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test with address without 0x prefix
-        model = TestModel(vault_address="1234567890abcdef1234567890abcdef12345678")
-        assert model.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        model = TestModel(address="1234567890abcdef1234567890abcdef12345678")
+        assert model.address == "0x1234567890abcdef1234567890abcdef12345678"
 
         # Test with invalid address
         with pytest.raises(ValidationError, match="Invalid address format"):
-            TestModel(vault_address="0x1234567890abcdef")
+            TestModel(address="0x1234567890abcdef")
 
     def test_token_address_validator_mixin(self) -> None:
         """Test the UnderlyingTokenValidatorMixin."""

@@ -12,6 +12,7 @@ from yield_analysis_sdk.type import (
     AnalysisResult,
     AuditStatus,
     Chain,
+    Contract,
     PerformanceAnalysis,
     RegistrationRequest,
     RegistrationResponse,
@@ -74,8 +75,8 @@ class TestTypes:
         """Test VaultInfo model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
-            vault_name="Test Vault",
+            address="0x1234567890abcdef1234567890abcdef12345678",
+            name="Test Vault",
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -85,8 +86,8 @@ class TestTypes:
         )
 
         assert vault_info.chain == Chain.BASE
-        assert vault_info.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
-        assert vault_info.vault_name == "Test Vault"
+        assert vault_info.address == "0x1234567890abcdef1234567890abcdef12345678"
+        assert vault_info.name == "Test Vault"
         assert vault_info.protocol == "Test"
         assert vault_info.max_deposit_amount == 1000000.0
         assert vault_info.entry_cost_bps == 0.0  # Default value
@@ -97,8 +98,8 @@ class TestTypes:
         """Test VaultInfo model serialization."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
-            vault_name="Test Vault",
+            address="0x1234567890abcdef1234567890abcdef12345678",
+            name="Test Vault",
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -108,8 +109,8 @@ class TestTypes:
         )
         obj = vault_info.model_dump(mode="json")
         assert obj["chain"] == "base"
-        assert obj["vault_address"] == "0x1234567890abcdef1234567890abcdef12345678"
-        assert obj["vault_name"] == "Test Vault"
+        assert obj["address"] == "0x1234567890abcdef1234567890abcdef12345678"
+        assert obj["name"] == "Test Vault"
         assert obj["protocol"] == "Test"
         assert obj["max_deposit_amount"] == 1000000.0
         assert obj["last_updated_timestamp"] == 1640995200
@@ -140,8 +141,8 @@ class TestTypes:
         """Test AnalysisResult model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
-            vault_name="Test Vault",
+            address="0x1234567890abcdef1234567890abcdef12345678",
+            name="Test Vault",
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -170,8 +171,8 @@ class TestTypes:
         """Test AnalysisResponse model creation."""
         vault_info = VaultInfo(
             chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
-            vault_name="Test Vault",
+            address="0x1234567890abcdef1234567890abcdef12345678",
+            name="Test Vault",
             protocol="Test",
             max_deposit_amount=1000000.0,
             last_updated_timestamp=1640995200,
@@ -201,41 +202,45 @@ class TestTypes:
     def test_share_price_history_creation(self) -> None:
         """Test SharePriceHistory model creation."""
         price_history = SharePriceHistory(
-            vault_name="Test Vault",
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
+            name="Test Vault",
+            address="0x1234567890abcdef1234567890abcdef12345678",
             price_history=[(1640995200, 1.05), (1640908800, 1.04)],
         )
 
-        assert price_history.vault_name == "Test Vault"
-        assert (
-            price_history.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
-        )
+        assert price_history.name == "Test Vault"
+        assert price_history.address == "0x1234567890abcdef1234567890abcdef12345678"
         assert len(price_history.price_history) == 2
         assert price_history.price_history[0] == (1640995200, 1.05)
 
     def test_registration_request_creation(self) -> None:
         """Test RegistrationRequest model creation."""
         request = RegistrationRequest(
-            chain=Chain.BASE,
-            vault_address="0x1234567890abcdef1234567890abcdef12345678",
+            vault=Contract(
+                chain=Chain.BASE,
+                address="0x1234567890abcdef1234567890abcdef12345678",
+            )
         )
 
-        assert request.chain == Chain.BASE
-        assert request.vault_address == "0x1234567890abcdef1234567890abcdef12345678"
+        assert request.vault.chain == Chain.BASE
+        assert request.vault.address == "0x1234567890abcdef1234567890abcdef12345678"
 
     def test_registration_request_validation(self) -> None:
         """Test RegistrationRequest model validation."""
         request = {
-            "chain": "base",
-            "vault_address": "0x1234567890abcdef1234567890abcdef12345678",
+            "vault": {
+                "chain": "base",
+                "address": "0x1234567890abcdef1234567890abcdef12345678",
+            }
         }
         RegistrationRequest.model_validate(request)
 
     def test_registration_request_json_validation(self) -> None:
         """Test RegistrationRequest model JSON validation."""
         request = {
-            "chain": "base",
-            "vault_address": "0x1234567890abcdef1234567890abcdef12345678",
+            "vault": {
+                "chain": "base",
+                "address": "0x1234567890abcdef1234567890abcdef12345678",
+            }
         }
         RegistrationRequest.model_validate_json(json.dumps(request))
 
