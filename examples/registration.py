@@ -7,7 +7,7 @@ from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
 from virtuals_acp.models import ACPAgentSort, ACPJobPhase
 
-from yield_analysis_sdk import Chain, RegistrationRequest
+from yield_analysis_sdk import Chain, RegistrationRequest, Contract
 
 load_dotenv(override=True)
 
@@ -57,7 +57,10 @@ def buyer():
         # <your_schema_field> can be found in your ACP Visualiser's "Edit Service" pop-up.
         # Reference: (./images/specify_requirement_toggle_switch.png)
         service_requirement=RegistrationRequest(
-            chain=Chain.BASE, vault_address=VAULT_USDC_MORPHO_SPARK
+            vault=Contract(
+                chain=Chain.BASE,
+                address=VAULT_USDC_MORPHO_SPARK,
+            )
         ).model_dump_json(),
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,
         expired_at=datetime.now() + timedelta(days=1),
