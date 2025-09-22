@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field
 
 from .validators import (
     AddressValidatorMixin,
@@ -82,8 +82,8 @@ class Contract(AddressValidatorMixin, ChainMixin, BaseModel):
 
 class RegistrationRequest(BaseModel):
     vault: Contract
-    contracts: Optional[List[Contract]] = None
-    github_repo_url: Optional[HttpUrl] = None
+    contracts: List[Contract]
+    github_repo_url: str
 
 
 class RegistrationResponse(BaseModel):

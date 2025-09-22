@@ -7,7 +7,7 @@ from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
 from virtuals_acp.models import ACPAgentSort, ACPJobPhase
 
-from yield_analysis_sdk import Chain, RegistrationRequest, Contract
+from yield_analysis_sdk import Chain, Contract, RegistrationRequest
 
 load_dotenv(override=True)
 
@@ -60,7 +60,14 @@ def buyer():
             vault=Contract(
                 chain=Chain.BASE,
                 address=VAULT_USDC_MORPHO_SPARK,
-            )
+            ),
+            contracts=[
+                Contract(
+                    chain=Chain.BASE,
+                    address="0x239A8F7778E5C57B4237733E4448f915C8112b58",
+                )
+            ],
+            github_repo_url="https://github.com/yield-analysis/yield-analysis-sdk",
         ).model_dump_json(),
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,
         expired_at=datetime.now() + timedelta(days=1),

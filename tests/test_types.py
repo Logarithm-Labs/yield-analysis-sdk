@@ -218,7 +218,9 @@ class TestTypes:
             vault=Contract(
                 chain=Chain.BASE,
                 address="0x1234567890abcdef1234567890abcdef12345678",
-            )
+            ),
+            contracts=[],
+            github_repo_url="",
         )
 
         assert request.vault.chain == Chain.BASE
@@ -230,7 +232,9 @@ class TestTypes:
             "vault": {
                 "chain": "base",
                 "address": "0x1234567890abcdef1234567890abcdef12345678",
-            }
+            },
+            "contracts": [],
+            "github_repo_url": "",
         }
         RegistrationRequest.model_validate(request)
 
@@ -240,7 +244,9 @@ class TestTypes:
             "vault": {
                 "chain": "base",
                 "address": "0x1234567890abcdef1234567890abcdef12345678",
-            }
+            },
+            "contracts": [],
+            "github_repo_url": "",
         }
         RegistrationRequest.model_validate_json(json.dumps(request))
 
