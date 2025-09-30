@@ -28,8 +28,8 @@ class TestTypes:
 
     def test_chain_enum(self) -> None:
         """Test Chain enum values."""
-        assert Chain.BASE.value == "base"
-        assert Chain.ETHEREUM.value == "ethereum"
+        assert Chain.BASE == "base"
+        assert Chain.ETHEREUM == "ethereum"
         assert Chain.ARBITRUM.value == "arbitrum"
         assert Chain.OTHER.value == "other"
 
@@ -37,16 +37,16 @@ class TestTypes:
         """Test Chain enum handling of unknown values."""
         # Test with unknown string values
         assert Chain("unknown_chain") == Chain.OTHER
-        assert Chain("invalid_chain") == Chain.OTHER
+        assert Chain("invalid_chain") == "other"
         assert Chain("") == Chain.OTHER
 
         # Test with known values
-        assert Chain("base") == Chain.BASE
+        assert Chain("base") == "base"
         assert Chain("ethereum") == Chain.ETHEREUM
 
     def test_strategy_type_enum(self) -> None:
         """Test StrategyType enum values."""
-        assert StrategyType.LIQUID_STAKING.value == "liquid_staking"
+        assert StrategyType.LIQUID_STAKING == "liquid_staking"
         assert StrategyType.LENDING.value == "lending"
         assert StrategyType.YIELD_AGGREGATOR.value == "yield_aggregator"
 
@@ -198,6 +198,7 @@ class TestTypes:
 
         assert len(response.analyses) == 1
         assert response.analyses[0] == vault_analysis
+        assert response.analyses[0].vault_info.chain == "base"
 
     def test_share_price_history_creation(self) -> None:
         """Test SharePriceHistory model creation."""

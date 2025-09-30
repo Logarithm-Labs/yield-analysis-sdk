@@ -3,14 +3,10 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from pydantic import BaseModel, Field
 
-from .validators import (
-    AddressValidatorMixin,
-    ChainMixin,
-    UnderlyingTokenValidatorMixin,
-)
+from .validators import AddressValidatorMixin
 
 
-class Chain(Enum):
+class Chain(str, Enum):
     ETHEREUM = "ethereum"
     ARBITRUM = "arbitrum"
     BASE = "base"
@@ -30,20 +26,8 @@ class Chain(Enum):
         """Handle unknown chain values by returning OTHER."""
         return cls.OTHER
 
-    def __eq__(self, other: Any) -> bool:
-        """Allow comparison between string values and enum objects."""
-        if isinstance(other, Chain):
-            return super().__eq__(other)
-        elif isinstance(other, str):
-            return self.value == other
-        return False
 
-    def __hash__(self) -> int:
-        """Maintain hash consistency with enum behavior."""
-        return super().__hash__()
-
-
-class StrategyType(Enum):
+class StrategyType(str, Enum):
     # Core Yield Strategies
     LIQUID_STAKING = "liquid_staking"
     LIQUID_RESTAKING = "liquid_restaking"
@@ -75,7 +59,7 @@ class AuditStatus(Enum):
     UNKNOWN = "unknown"
 
 
-class Contract(AddressValidatorMixin, ChainMixin, BaseModel):
+class Contract(AddressValidatorMixin, BaseModel):
     address: str
     chain: Chain
 
@@ -101,7 +85,7 @@ class AnalysisRequest(BaseModel):
     strategies: List[Strategy]
 
 
-class VaultInfo(AddressValidatorMixin, ChainMixin, BaseModel):
+class VaultInfo(AddressValidatorMixin, BaseModel):
     # Basic Vault Information
     chain: Chain
     address: str

@@ -9,8 +9,6 @@ from yield_analysis_sdk.exceptions import ValidationError
 from yield_analysis_sdk.type import Chain
 from yield_analysis_sdk.validators import (
     AddressValidatorMixin,
-    ChainMixin,
-    UnderlyingTokenValidatorMixin,
     normalize_address,
     validate_address_value,
     validate_chain_value,
@@ -35,24 +33,6 @@ class TestValidators:
         """Test validating chain values that are already enums."""
         assert validate_chain_value(Chain.ETHEREUM) == Chain.ETHEREUM
         assert validate_chain_value(Chain.BASE) == Chain.BASE
-
-    def test_chain_validator_mixin(self) -> None:
-        """Test the ChainMixin."""
-
-        class TestModel(ChainMixin, BaseModel):
-            chain: Chain
-
-        # Test with string
-        model = TestModel(chain="ethereum")
-        assert model.chain == Chain.ETHEREUM.value
-
-        # Test with invalid string
-        model = TestModel(chain="invalid")
-        assert model.chain == Chain.OTHER.value
-
-        # Test with enum
-        model = TestModel(chain=Chain.BASE)
-        assert model.chain == Chain.BASE.value
 
     def test_normalize_address_valid(self) -> None:
         """Test normalizing valid addresses."""
@@ -133,44 +113,3 @@ class TestValidators:
         # Test with invalid address
         with pytest.raises(ValidationError, match="Invalid address format"):
             TestModel(address="0x1234567890abcdef")
-
-    def test_token_address_validator_mixin(self) -> None:
-        """Test the UnderlyingTokenValidatorMixin."""
-
-        class TestModel(UnderlyingTokenValidatorMixin, BaseModel):
-            underlying_token: str
-
-        # Test with valid address
-        model = TestModel(underlying_token="0x1234567890abcdef1234567890abcdef12345678")
-        assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
-
-        # Test with address without 0x prefix
-        model = TestModel(underlying_token="1234567890abcdef1234567890abcdef12345678")
-        assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
-
-        # Test with invalid address
-        with pytest.raises(ValidationError, match="Invalid address format"):
-            TestModel(underlying_token="0x1234567890abcdef")
-
-    def test_combined_validators(self) -> None:
-        """Test combining multiple validators."""
-
-        class TestModel(UnderlyingTokenValidatorMixin, ChainMixin, BaseModel):
-            chain: Chain
-            underlying_token: str
-
-        # Test with valid data
-        model = TestModel(
-            chain="ethereum",
-            underlying_token="0x1234567890abcdef1234567890abcdef12345678",
-        )
-        assert model.chain == Chain.ETHEREUM.value
-        assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"
-
-        # Test with invalid chain and valid address
-        model = TestModel(
-            chain="invalid_chain",
-            underlying_token="0x1234567890abcdef1234567890abcdef12345678",
-        )
-        assert model.chain == Chain.OTHER
-        assert model.underlying_token == "0x1234567890abcdef1234567890abcdef12345678"

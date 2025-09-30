@@ -13,28 +13,6 @@ if TYPE_CHECKING:
     from .type import Chain
 
 
-class ChainMixin:
-    """Mixin class that provides chain validation functionality."""
-
-    model_config = ConfigDict(use_enum_values=True)
-
-    @field_validator("chain", mode="before")
-    @classmethod
-    def validate_chain(cls, v: Any) -> "Chain":
-        """Validate chain and return OTHER if not found."""
-        from .type import Chain  # Import here to avoid circular import
-
-        if isinstance(v, str):
-            try:
-                return Chain(v)
-            except ValueError:
-                return Chain.OTHER
-        elif isinstance(v, Chain):
-            return v
-        else:
-            return Chain.OTHER
-
-
 class AddressValidatorMixin:
     """Mixin class that provides address validation functionality."""
 
@@ -46,21 +24,6 @@ class AddressValidatorMixin:
             return normalize_address(v)
         elif v is None:
             raise ValidationError("Address cannot be None")
-        else:
-            return str(v)
-
-
-class UnderlyingTokenValidatorMixin:
-    """Mixin class that provides token address validation functionality."""
-
-    @field_validator("underlying_token", mode="before")
-    @classmethod
-    def validate_underlying_token(cls, v: Any) -> str:
-        """Validate underlying token address format and normalize it."""
-        if isinstance(v, str):
-            return normalize_address(v)
-        elif v is None:
-            raise ValidationError("Underlying token cannot be None")
         else:
             return str(v)
 
