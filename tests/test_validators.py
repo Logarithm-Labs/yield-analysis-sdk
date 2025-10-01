@@ -6,33 +6,11 @@ import pytest
 from pydantic import BaseModel
 
 from yield_analysis_sdk.exceptions import ValidationError
-from yield_analysis_sdk.type import Chain
-from yield_analysis_sdk.validators import (
-    AddressValidatorMixin,
-    normalize_address,
-    validate_address_value,
-    validate_chain_value,
-)
+from yield_analysis_sdk.validators import AddressValidatorMixin, normalize_address
 
 
 class TestValidators:
     """Test cases for validator functionality."""
-
-    def test_validate_chain_value_valid(self) -> None:
-        """Test validating valid chain values."""
-        assert validate_chain_value("ethereum") == Chain.ETHEREUM
-        assert validate_chain_value("base") == Chain.BASE
-        assert validate_chain_value("arbitrum") == Chain.ARBITRUM
-
-    def test_validate_chain_value_invalid(self) -> None:
-        """Test validating invalid chain values."""
-        assert validate_chain_value("invalid_chain") == Chain.OTHER
-        assert validate_chain_value("unknown") == Chain.OTHER
-
-    def test_validate_chain_value_already_enum(self) -> None:
-        """Test validating chain values that are already enums."""
-        assert validate_chain_value(Chain.ETHEREUM) == Chain.ETHEREUM
-        assert validate_chain_value(Chain.BASE) == Chain.BASE
 
     def test_normalize_address_valid(self) -> None:
         """Test normalizing valid addresses."""
@@ -81,20 +59,6 @@ class TestValidators:
         # Test invalid characters
         with pytest.raises(ValidationError, match="Invalid address format"):
             normalize_address("0x1234567890abcdef1234567890abcdef1234567g")
-
-    def test_validate_address_value(self) -> None:
-        """Test the validate_address_value function."""
-        # Test valid address
-        result = validate_address_value("0x1234567890abcdef1234567890abcdef12345678")
-        assert result == "0x1234567890abcdef1234567890abcdef12345678"
-
-        # Test address without 0x prefix
-        result = validate_address_value("1234567890abcdef1234567890abcdef12345678")
-        assert result == "0x1234567890abcdef1234567890abcdef12345678"
-
-        # Test invalid address
-        with pytest.raises(ValidationError, match="Invalid address format"):
-            validate_address_value("0x1234567890abcdef")
 
     def test_address_validator_mixin(self) -> None:
         """Test the AddressValidatorMixin."""

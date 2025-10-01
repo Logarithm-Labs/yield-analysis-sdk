@@ -28,29 +28,6 @@ class AddressValidatorMixin:
             return str(v)
 
 
-def validate_chain_value(value: Any) -> "Chain":
-    """
-    Standalone function to validate chain values.
-
-    Args:
-        value: The value to validate
-
-    Returns:
-        Chain enum value, defaults to Chain.OTHER if invalid
-    """
-    from .type import Chain  # Import here to avoid circular import
-
-    if isinstance(value, str):
-        try:
-            return Chain(value)
-        except ValueError:
-            return Chain.OTHER
-    elif isinstance(value, Chain):
-        return value
-    else:
-        return Chain.OTHER
-
-
 def normalize_address(address: str) -> str:
     """
     Normalize address format.
@@ -79,19 +56,3 @@ def normalize_address(address: str) -> str:
         raise ValidationError(f"Invalid address format: {address}")
 
     return address
-
-
-def validate_address_value(address: str) -> str:
-    """
-    Standalone function to validate address values.
-
-    Args:
-        address: The address to validate
-
-    Returns:
-        Normalized address
-
-    Raises:
-        ValidationError: If the address format is invalid
-    """
-    return normalize_address(address)
