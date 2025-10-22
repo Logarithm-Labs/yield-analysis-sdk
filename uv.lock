@@ -1715,7 +1715,7 @@ wheels = [
 
 [[package]]
 name = "virtuals-acp"
-version = "0.2.5"
+version = "0.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1730,9 +1730,9 @@ dependencies = [
     { name = "web3" },
     { name = "websocket-client" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/6a/9a37af725b495ab2b29f4b2ccaea1e63789d46393ffdc292241c0baab2e6/virtuals_acp-0.2.5.tar.gz", hash = "sha256:2f7629b40252c653d70b4c20838d20741b888af5556f4cf98793749ed8870d92", size = 25689 }
+sdist = { url = "https://files.pythonhosted.org/packages/00/f8/998045a717e00f62ab654ccee29d9491bb3f81cea743dae68598ea4b8b84/virtuals_acp-0.3.2.tar.gz", hash = "sha256:de7acb54a6061921266fe5efbdd8971a01059eff893c4b490b3dae492141ad63", size = 33688 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f0/b1/ee50bfca795e2d671804f061f65c76574c3e8e0632944254e19bbf699fc2/virtuals_acp-0.2.5-py3-none-any.whl", hash = "sha256:e417adbf76fb56228de1ad847e57ef47386ab5bece071ab7fda3963fe740766b", size = 26674 },
+    { url = "https://files.pythonhosted.org/packages/8a/8e/ac47e7bb99ef328554fc95cd3b61e868447c677d4245ba381dd821cd2155/virtuals_acp-0.3.2-py3-none-any.whl", hash = "sha256:f6ab04ec313745f88b37cd77e00528eb20681a01ca2afb328e263ff56404a9cd", size = 39332 },
 ]
 
 [[package]]
@@ -1971,5 +1971,5 @@ dev = [
     { name = "mypy", specifier = ">=1.16.1" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
-    { name = "virtuals-acp", specifier = ">=0.2.5" },
+    { name = "virtuals-acp", specifier = ">=0.3.2" },
 ]

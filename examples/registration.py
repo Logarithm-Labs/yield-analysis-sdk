@@ -1,13 +1,21 @@
+import logging
 import time
 from datetime import datetime, timedelta
 
 from dotenv import load_dotenv
 from virtuals_acp.client import VirtualsACP
+from virtuals_acp.contract_clients.contract_client_v2 import ACPContractClientV2
 from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
-from virtuals_acp.models import ACPAgentSort, ACPJobPhase
+from virtuals_acp.models import ACPJobPhase
 
 from yield_analysis_sdk import Chain, Contract, RegistrationRequest
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger("BuyerAgent")
 
 load_dotenv(override=True)
 
@@ -24,9 +32,11 @@ POLL_INTERVAL_SECONDS = 20
 def buyer():
     env = EnvSettings()
     acp = VirtualsACP(
-        wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
-        agent_wallet_address=env.BUYER_AGENT_WALLET_ADDRESS,
-        entity_id=env.BUYER_ENTITY_ID,
+        acp_contract_clients=ACPContractClientV2(
+            wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
+            agent_wallet_address=env.BUYER_AGENT_WALLET_ADDRESS,
+            entity_id=env.BUYER_ENTITY_ID,
+        ),
     )
     print(f"Buyer ACP Initialized. Agent: {acp.agent_address}")
 
@@ -44,9 +54,9 @@ def buyer():
     chosen_agent = acp.get_agent(wallet_address=BIOS_AGENT_ADDRESS)
 
     # Pick one of the service offerings based on your criteria (in this example we just pick the first one)
-    chosen_job_offering = chosen_agent.offerings[0]
+    chosen_job_offering = chosen_agent.job_offerings[0]
 
-    print()
+    print(chosen_job_offering)
 
     # 1. Initiate Job
     print(
@@ -61,12 +71,7 @@ def buyer():
                 chain=Chain.BASE,
                 address=VAULT_USDC_MORPHO_SPARK,
             ),
-            contracts=[
-                Contract(
-                    chain=Chain.BASE,
-                    address="0x239A8F7778E5C57B4237733E4448f915C8112b58",
-                )
-            ],
+            contracts=[],
             github_repo_url="https://github.com/yield-analysis/yield-analysis-sdk",
         ).model_dump_json(),
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,
@@ -82,29 +87,40 @@ def buyer():
         time.sleep(POLL_INTERVAL_SECONDS)
         job: ACPJob = acp.get_job_by_onchain_id(job_id)
         print(f"Polling Job {job_id}: Current Phase: {job.phase.name}")
+        memo_to_sign = job.latest_memo
 
-        if job.phase == ACPJobPhase.NEGOTIATION:
-            # Check if there's a memo that indicates next phase is TRANSACTION
-            for memo in job.memos:
-                if memo.next_phase == ACPJobPhase.TRANSACTION:
-                    print("Paying job", job_id)
-                    job.pay(job.price)
-        elif job.phase == ACPJobPhase.REQUEST:
-            print(f"Job {job_id} still in REQUEST phase. Waiting for seller...")
+        if (
+            job.phase == ACPJobPhase.NEGOTIATION
+            and memo_to_sign is not None
+            and memo_to_sign.next_phase == ACPJobPhase.TRANSACTION
+        ):
+            logger.info(f"Paying for job {job.id}")
+            job.pay_and_accept_requirement()
+            logger.info(f"Job {job.id} paid")
+
+        elif (
+            job.phase == ACPJobPhase.TRANSACTION
+            and memo_to_sign is not None
+            and memo_to_sign.next_phase == ACPJobPhase.REJECTED
+        ):
+            logger.info(
+                f"Signing job {job.id} rejection memo, rejection reason: {memo_to_sign.content}"
+            )
+            memo_to_sign.sign(True, "Accepts job rejection")
+            logger.info(f"Job {job.id} rejection memo signed")
+
         elif job.phase == ACPJobPhase.EVALUATION:
             print(f"Job {job_id} is in EVALUATION.")
             job.evaluate(True)
             print(f"Job {job_id} evaluated")
-        elif job.phase == ACPJobPhase.TRANSACTION:
-            print(f"Job {job_id} is in TRANSACTION. Waiting for seller to deliver...")
-        elif job.phase == ACPJobPhase.COMPLETED:
-            print("Job completed", job)
-            break
-        elif job.phase == ACPJobPhase.REJECTED:
-            print("Job rejected", job)
-            break
 
-    print("\n--- Buyer Script Finished ---")
+        elif job.phase == ACPJobPhase.COMPLETED:
+            logger.info(
+                f"Job {job.id} completed, received deliverable: {job.deliverable}"
+            )
+
+        elif job.phase == ACPJobPhase.REJECTED:
+            logger.info(f"Job {job.id} rejected by seller")
 
 
 if __name__ == "__main__":

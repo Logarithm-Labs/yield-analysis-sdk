@@ -1,11 +1,14 @@
 import json
 import threading
 import time
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ValidationError
-from virtuals_acp import ACPJob, ACPJobPhase, ACPMemo, VirtualsACP
+from virtuals_acp.client import VirtualsACP
+from virtuals_acp.contract_clients.contract_client_v2 import ACPContractClientV2
+from virtuals_acp.job import ACPJob
+from virtuals_acp.models import ACPJobPhase
 
 load_dotenv(override=True)
 
@@ -16,11 +19,9 @@ from yield_analysis_sdk import (
     AnalysisResponse,
     AnalysisResult,
     Chain,
-    SharePriceHistory,
     VaultInfo,
     analyze_yield_with_daily_share_price,
     get_daily_share_price_history_from_subgraph,
-    normalize_address,
 )
 
 
@@ -89,7 +90,7 @@ def seller():
                     )
 
                     # analyze yield
-                    result: AnalysisResponse = AnalysisResponse(analyses=[])
+                    result = AnalysisResponse(analyses=[])
                     for price_history in price_histories:
                         result.analyses.append(
                             AnalysisResult(
@@ -107,10 +108,9 @@ def seller():
                         )
 
                     print(f"Delivering analysis result: {result.model_dump_json()}")
-                    delivery_data = {"type": "text", "value": result.model_dump_json()}
 
                     # deliver job
-                    job.deliver(json.dumps(delivery_data))
+                    job.deliver(result.model_dump())
                     break
 
     if env.WHITELISTED_WALLET_PRIVATE_KEY is None:
@@ -120,10 +120,12 @@ def seller():
 
     # Initialize the ACP client
     VirtualsACP(
-        wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
-        agent_wallet_address=env.SELLER_AGENT_WALLET_ADDRESS,
+        acp_contract_clients=ACPContractClientV2(
+            wallet_private_key=env.WHITELISTED_WALLET_PRIVATE_KEY,
+            agent_wallet_address=env.SELLER_AGENT_WALLET_ADDRESS,
+            entity_id=env.SELLER_ENTITY_ID,
+        ),
         on_new_task=on_new_task,
-        entity_id=env.SELLER_ENTITY_ID,
     )
 
     print("Waiting for new task...")
