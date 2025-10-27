@@ -93,5 +93,5 @@ dev = [
     "mypy>=1.16.1",
     "pytest>=8.4.1",
     "pytest-cov>=6.2.1",
-    "virtuals-acp>=0.3.2",
+    "virtuals-acp>=0.3.5",
 ]

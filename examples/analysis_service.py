@@ -110,7 +110,7 @@ def seller():
                     print(f"Delivering analysis result: {result.model_dump_json()}")
 
                     # deliver job
-                    job.deliver(result.model_dump())
+                    job.deliver(result.model_dump(mode="json"))
                     break
 
     if env.WHITELISTED_WALLET_PRIVATE_KEY is None:

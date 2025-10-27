@@ -63,17 +63,24 @@ def buyer():
         f"\nInitiating job with Seller: {chosen_agent.wallet_address}, Evaluator: {env.EVALUATOR_AGENT_WALLET_ADDRESS}"
     )
 
+    request_dict = RegistrationRequest(
+        vault=Contract(
+            chain=Chain.BASE,
+            address=VAULT_USDC_MORPHO_SPARK,
+        ),
+        contracts=[
+            Contract(
+                chain=Chain.BASE,
+                address=VAULT_USDC_MORPHO_SPARK,
+            )
+        ],
+        github_repo_url="https://example.com/repo",
+    ).model_dump(mode="json")
+
     job_id = chosen_job_offering.initiate_job(
         # <your_schema_field> can be found in your ACP Visualiser's "Edit Service" pop-up.
         # Reference: (./images/specify_requirement_toggle_switch.png)
-        service_requirement=RegistrationRequest(
-            vault=Contract(
-                chain=Chain.BASE,
-                address=VAULT_USDC_MORPHO_SPARK,
-            ),
-            contracts=[],
-            github_repo_url="https://github.com/yield-analysis/yield-analysis-sdk",
-        ).model_dump_json(),
+        service_requirement=request_dict,
         evaluator_address=env.BUYER_AGENT_WALLET_ADDRESS,
         expired_at=datetime.now() + timedelta(days=1),
     )
