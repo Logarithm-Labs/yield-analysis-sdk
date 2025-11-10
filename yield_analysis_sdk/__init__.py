@@ -4,7 +4,7 @@ Yield Analysis SDK
 A Python SDK for analyzing DeFi vault performance and yield metrics.
 """
 
-__version__ = "0.5.4"
+__version__ = "0.5.5"
 __author__ = "Logarithm Labs"
 __email__ = "dev@logarithm.fi"
 
