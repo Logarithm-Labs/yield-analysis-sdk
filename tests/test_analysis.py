@@ -35,7 +35,6 @@ class TestAnalysis:
         assert result.apy_90d == 0.0  # Not enough data for 90d
         assert result.volatility_30d >= 0
         assert result.max_drawdown >= 0
-        assert result.current_price == prices[-1]
         assert result.analysis_period_days == 30
 
     def test_analyze_yield_with_daily_share_price_insufficient_data(self) -> None:
@@ -78,7 +77,6 @@ class TestAnalysis:
 
         assert result.apy_7d < 0
         assert result.apy_30d < 0
-        assert result.current_price == prices[-1]
 
     def test_analyze_yield_with_daily_share_price_volatile_data(self) -> None:
         """Test analysis with volatile price data."""

@@ -109,6 +109,8 @@ class VaultInfo(AddressValidatorMixin, BaseModel):
         0.05, description="Risk-free rate used for Sharpe ratio calculation"
     )
 
+    current_share_price: float = Field(..., description="Current share price")
+
     # Analysis Metadata
     last_updated_timestamp: int = Field(
         ..., description="Last update timestamp in seconds"
@@ -127,9 +129,6 @@ class PerformanceAnalysis(BaseModel):
         ..., description="Maximum historical drawdown percentage"
     )
     sharpe_ratio: float = Field(..., description="Risk-adjusted return ratio")
-
-    # Current State
-    current_price: float = Field(..., description="Current share price")
 
     # Analysis Metadata
     analysis_period_days: int = Field(

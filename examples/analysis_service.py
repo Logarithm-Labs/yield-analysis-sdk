@@ -4,7 +4,7 @@ import time
 from typing import Optional
 
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 from virtuals_acp.client import VirtualsACP
 from virtuals_acp.contract_clients.contract_client_v2 import ACPContractClientV2
 from virtuals_acp.job import ACPJob
@@ -99,6 +99,9 @@ def seller():
                                     address=price_history.address,
                                     name=price_history.name,
                                     protocol="Morpho Meta Vault",
+                                    current_share_price=price_history.price_history[-1][
+                                        1
+                                    ],
                                     last_updated_timestamp=int(time.time()),
                                 ),
                                 performance=analyze_yield_with_daily_share_price(

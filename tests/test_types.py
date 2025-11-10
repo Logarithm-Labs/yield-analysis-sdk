@@ -83,6 +83,7 @@ class TestTypes:
             entry_cost_bps=0.0,
             exit_cost_bps=0.0,
             risk_free_rate=0.05,
+            current_share_price=1.0,
         )
 
         assert vault_info.chain == Chain.BASE
@@ -106,6 +107,7 @@ class TestTypes:
             entry_cost_bps=0.0,
             exit_cost_bps=0.0,
             risk_free_rate=0.05,
+            current_share_price=1.0,
         )
         obj = vault_info.model_dump(mode="json")
         assert obj["chain"] == "base"
@@ -124,7 +126,6 @@ class TestTypes:
             volatility_30d=2.1,
             max_drawdown=1.5,
             sharpe_ratio=1.2,
-            current_price=1.05,
             analysis_period_days=90,
         )
 
@@ -134,7 +135,6 @@ class TestTypes:
         assert performance.volatility_30d == 2.1
         assert performance.max_drawdown == 1.5
         assert performance.sharpe_ratio == 1.2
-        assert performance.current_price == 1.05
         assert performance.analysis_period_days == 90
 
     def test_vault_performance_analysis_creation(self) -> None:
@@ -149,6 +149,7 @@ class TestTypes:
             entry_cost_bps=0.0,
             exit_cost_bps=0.0,
             risk_free_rate=0.05,
+            current_share_price=1.0,
         )
 
         performance = PerformanceAnalysis(
@@ -158,7 +159,6 @@ class TestTypes:
             volatility_30d=2.1,
             max_drawdown=1.5,
             sharpe_ratio=1.2,
-            current_price=1.05,
             analysis_period_days=90,
         )
 
@@ -179,6 +179,7 @@ class TestTypes:
             entry_cost_bps=0.0,
             exit_cost_bps=0.0,
             risk_free_rate=0.05,
+            current_share_price=1.0,
         )
 
         performance = PerformanceAnalysis(
@@ -188,7 +189,6 @@ class TestTypes:
             volatility_30d=2.1,
             max_drawdown=1.5,
             sharpe_ratio=1.2,
-            current_price=1.05,
             analysis_period_days=90,
         )
 

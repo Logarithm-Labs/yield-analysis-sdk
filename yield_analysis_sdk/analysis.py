@@ -56,7 +56,6 @@ def analyze_yield_with_daily_share_price(
         volatility_30d=volatility_30d,
         max_drawdown=max_drawdown,
         sharpe_ratio=sharpe_ratio,
-        current_price=prices[-1],
         analysis_period_days=len(prices),
     )
 

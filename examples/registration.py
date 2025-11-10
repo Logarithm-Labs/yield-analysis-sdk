@@ -9,8 +9,6 @@ from virtuals_acp.env import EnvSettings
 from virtuals_acp.job import ACPJob
 from virtuals_acp.models import ACPJobPhase
 
-from yield_analysis_sdk import Chain, Contract, RegistrationRequest
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
@@ -20,7 +18,7 @@ logger = logging.getLogger("BuyerAgent")
 load_dotenv(override=True)
 
 VAULT_USDC_MORPHO_SPARK = "0x236919F11ff9eA9550A4287696C2FC9e18E6e890"
-BIOS_AGENT_ADDRESS = "0xA908B2A981ae1106e5B047ef44604CCaA1E1c7F9"
+BIOS_AGENT_ADDRESS = "0x239A8F7778E5C57B4237733E4448f915C8112b58"
 
 # --- Configuration for the job polling interval ---
 POLL_INTERVAL_SECONDS = 20
@@ -63,19 +61,16 @@ def buyer():
         f"\nInitiating job with Seller: {chosen_agent.wallet_address}, Evaluator: {env.EVALUATOR_AGENT_WALLET_ADDRESS}"
     )
 
-    request_dict = RegistrationRequest(
-        vault=Contract(
-            chain=Chain.BASE,
-            address=VAULT_USDC_MORPHO_SPARK,
-        ),
-        contracts=[
-            Contract(
-                chain=Chain.BASE,
-                address=VAULT_USDC_MORPHO_SPARK,
-            )
+    request_dict = {
+        "vault": {
+            "chain": "base",
+            "address": "0xbeeF010f9cb27031ad51e3333f9aF9C6B1228183",
+        },
+        "contracts": [
+            {"chain": "base", "address": "0xbeeF010f9cb27031ad51e3333f9aF9C6B1228183"}
         ],
-        github_repo_url="https://example.com/repo",
-    ).model_dump(mode="json")
+        "github_repo_url": "https://github.com/morpho-org/vault-v2",
+    }
 
     job_id = chosen_job_offering.initiate_job(
         # <your_schema_field> can be found in your ACP Visualiser's "Edit Service" pop-up.
